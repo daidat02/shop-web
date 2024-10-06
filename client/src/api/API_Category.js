@@ -1,9 +1,9 @@
-import axios from 'axios';
+import { axiosConfig } from '../configs/axios.config';
 import { createCategorySuccess, getCategoriesSuccess } from '../redux/slice/category';
 
 export const createCategory = async(dispacth, data)=>{
     try {
-        await axios.post(`/cat/create`,data)
+        await axiosConfig.post(`/cat/create`,data)
         dispacth(createCategorySuccess());
         return { success: true }; // Thêm dòng này để trả về kết quả thành công
     } catch (error) {
@@ -14,7 +14,7 @@ export const createCategory = async(dispacth, data)=>{
 
 export const getCategories =async(dispacth)=>{
     try {
-        const res = await axios.get(`/cat/get`)
+        const res = await axiosConfig.get(`/cat/get`)
 
         dispacth(getCategoriesSuccess(res.data));
     } catch (error) {

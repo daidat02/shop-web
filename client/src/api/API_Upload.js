@@ -1,5 +1,6 @@
 import axios from "axios";
 import { message } from 'antd';
+import { axiosConfig } from "../configs/axios.config";
 
 // Hàm upload hình ảnh
 export const uploadImages = async (file) => {
@@ -8,7 +9,7 @@ export const uploadImages = async (file) => {
 
   try {
     // Gửi request đến API upload
-    const response = await axios.post('http://localhost:3000/upload/images', formData, {
+    const response = await axiosConfig.post('/upload/images', formData, {
       headers: {
         'Content-Type': 'multipart/form-data', // Đặt header cho multipart
       },
