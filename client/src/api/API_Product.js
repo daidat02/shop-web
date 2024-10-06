@@ -1,9 +1,10 @@
 import axios from 'axios';
 import { createProductSuccess, getProductsSuccess } from '../redux/slice/product';
+import { axiosConfig } from '../configs/axios.config';
 
 export const createProduct = async(dispacth, data)=>{
     try {
-        await axios.post(`/product/create`,data)
+        await axiosConfig.post(`/prod/create`,data)
         dispacth(createProductSuccess());
         return { success: true }; // Thêm dòng này để trả về kết quả thành công
     } catch (error) {
@@ -14,7 +15,7 @@ export const createProduct = async(dispacth, data)=>{
 
 export const getProducts =async(dispacth)=>{
     try {
-        const res = await axios.get(`/product/get`)
+        const res = await axiosConfig.get(`/prod/get`)
 
         dispacth(getProductsSuccess(res.data));
     } catch (error) {
