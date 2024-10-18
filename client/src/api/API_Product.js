@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { createProductSuccess, deleteProductSuccess, getproductDetailSuccess, getProductsSuccess } from '../redux/slice/product';
+import { addProdToCartSuccess, createProductSuccess, deleteProductSuccess, getproductDetailSuccess, getProductsSuccess } from '../redux/slice/product';
 import { getProductByCategorySuccess } from '../redux/slice/category';
 
 export const createProduct = async(dispacth, categoryId, data)=>{
@@ -47,5 +47,18 @@ export const getProductDetail = async(dispacth,productId)=>{
         dispacth(getproductDetailSuccess(res.data));
     } catch (error) {
         console.log(error);
+    }
+}
+
+export const addProdToCart = async(accessToken, dispacth, data)=>{
+    try {
+        const res = await axios.post(`/shopping/add` , data, {
+            headers:{token: `Bearer ${accessToken}`}
+        });
+
+        dispacth(addProdToCartSuccess());
+        return{success:true}
+    } catch (error) {
+        return {success:false}
     }
 }

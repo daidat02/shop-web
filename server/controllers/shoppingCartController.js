@@ -9,8 +9,11 @@ const addProductToShoppingCart = async (req, res) => {
     try {
         const user = req.user;
         const productInstance = req.productInstance;
+        
+        // Tính tổng giá của sản phẩm dựa trên số lượng
         const priceTotal = productInstance.price * quantity;
 
+        // Tìm giỏ hàng của người dùng
         const cart = await DB_Connection.ShoppingCart.findOne({ user: new ObjectId(user.id) });
 
         if (cart) {
@@ -20,16 +23,27 @@ const addProductToShoppingCart = async (req, res) => {
             if (itemIndex > -1) {
                 // Nếu sản phẩm đã có, cập nhật số lượng và giá tổng
                 cart.items[itemIndex].quantity += quantity;
-                cart.items[itemIndex].priceTotal += priceTotal; 
+
+                // Giới hạn số lượng tối đa cho mỗi sản phẩm
+                if (cart.items[itemIndex].quantity > 99) {
+                    cart.items[itemIndex].quantity = 99; // Giới hạn số lượng không vượt quá 99
+                }
+
+                // Cập nhật lại giá tổng
+                cart.items[itemIndex].priceTotal = productInstance.price * cart.items[itemIndex].quantity; 
             } else {
                 // Nếu sản phẩm chưa có, thêm mới
                 cart.items.push({
                     product: new ObjectId(productInstance._id),
-                    quantity,
-                    priceTotal
+                    quantity: Math.min(quantity, 99), // Giới hạn số lượng không vượt quá 99
+                    priceTotal: productInstance.price * Math.min(quantity, 99) // Tính giá tổng
                 });
             }
-            
+
+            // Cập nhật số lượng items trong giỏ hàng
+            cart.count = cart.items.length;
+
+            // Lưu giỏ hàng
             await cart.save();
             res.status(STATUS.OK).json({ message: 'Sản phẩm đã được thêm vào giỏ hàng', cart });
         } else {
@@ -38,9 +52,10 @@ const addProductToShoppingCart = async (req, res) => {
                 user: new ObjectId(user.id),
                 items: [{
                     product: new ObjectId(productInstance._id),
-                    quantity,
-                    priceTotal
-                }]
+                    quantity: Math.min(quantity, 99), // Giới hạn số lượng không vượt quá 99
+                    priceTotal: productInstance.price * Math.min(quantity, 99) // Tính giá tổng
+                }],
+                count: 1 // Khởi tạo số lượng items
             });
             await newCart.save();
             res.status(STATUS.CREATED).json({ message: 'Giỏ hàng đã được tạo và sản phẩm đã được thêm vào', newCart });
@@ -52,6 +67,7 @@ const addProductToShoppingCart = async (req, res) => {
         });
     }
 };
+
 
 const getShoppingCart = async(req,res)=>{
     try {

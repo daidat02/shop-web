@@ -13,12 +13,13 @@ import storage from 'redux-persist/lib/storage';
 import categoryReducer from '../slice/category'
 import productReducer from '../slice/product'
 import authReducer from '../slice/auth'
-
+import cartReducer from '../slice/cart'
 
 const rootReducer= combineReducers({
     categories: categoryReducer,
     products : productReducer,
     auth: authReducer,
+    cart: cartReducer
 });
 
 const persistConfig = {

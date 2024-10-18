@@ -25,28 +25,21 @@ const items = [
     key: '/admin/category',
     icon: <AppstoreOutlined />,
     label: 'Danh Mục ',
-    children: [
-      {
-        key: '/admin/category',
-        icon: <AppstoreOutlined />,
-        label: 'Danh Mục Sản Phẩm',
-      },
-      {
-        key: 'create-category', // Sử dụng key khác cho Tạo Danh Mục
-        icon: <FormOutlined />,
-        label: 'Tạo Danh Mục',
-      },
-    ],
   },
   {
-    key: '/admin/voucher',
-    icon: <GiftOutlined />,
-    label: 'Khuyến Mãi',
+    key: '/admin/product',
+    icon: <ShoppingCartOutlined />,
+    label: 'Sản Phẩm',
   },
   {
     key: '/admin/order',
     icon: <ShoppingCartOutlined />,
     label: 'Đơn Hàng',
+  },
+  {
+    key: '/admin/voucher',
+    icon: <GiftOutlined />,
+    label: 'Khuyến Mãi',
   },
   {
     key: 'manage',

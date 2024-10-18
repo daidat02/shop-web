@@ -1,10 +1,17 @@
 import React, { useEffect } from 'react';
-import { Row, Col, Card } from 'antd';
+import { Space, Table, Tag,Switch, Input,Button } from 'antd';
+import {DeleteOutlined ,PlusOutlined} from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCategories } from '../../../../api/API_Category';
 import { useNavigate } from 'react-router-dom'; // Sử dụng useNavigate để điều hướng
 
-const { Meta } = Card;
+const { Search } = Input;
+
+const onChange = (checked) => {
+  console.log(`switch to ${checked}`);
+};
+
+
 
 function AdminCategory() {
   const dispatch = useDispatch();
@@ -16,26 +23,84 @@ function AdminCategory() {
   },[dispatch]);
 
   // Hàm xử lý khi nhấn vào Card
-  const handleCardClick = (categoryId) => {
+  const handleClick = (categoryId) => {
     navigate(`/admin/products/${categoryId}`);
   };
 
+  const handleDelete = (id)=>{
+
+  }
+  
+  const columns = [
+    {
+      title: 'ID',
+         render: (_, __, index) => `#${index + 1}`,
+        width: "20px"
+    },
+    {
+      title: 'Tên Danh Mục',
+      dataIndex: 'category_name',
+      key: 'category_name',
+      width: "50%"
+    },
+   
+    {
+      title: 'Trạng Thái',
+      key: 'state',
+      dataIndex: 'state',
+      render: (_, { state }) => (
+        <>
+          <Tag color={state === 'active' ? 'green' : 'red'}>
+            {state === 'active' ? 'Active' : 'Inactive'}
+          </Tag>
+          <Switch 
+            checked={state === 'active'}  
+            onChange={onChange}           // Hàm xử lý khi chuyển đổi trạng thái
+            style={{
+              marginLeft: 8,                
+            }}
+          />
+        </>
+      ),
+      align: 'center'
+    },
+    {
+      title: 'Hành Động',
+      key: 'action',
+      render: (_, record) => (
+        <Space size="middle">
+          <a onClick={()=> handleClick(record.category_id)}>Chi tiết </a>
+          <DeleteOutlined 
+            style={{ color: 'red', cursor: 'pointer', fontSize: '16px' }} 
+            onClick={() => handleDelete(record._id)} 
+          />     
+        </Space>
+      ),
+      width:"20%",
+      align: 'center' // Căn giữa nội dung cột
+  
+    },
+  ];
+  
   return (
     <div style={{ padding: '20px' }}>
-      <Row gutter={[16, 16]} justify="start"> 
-        {categories.map((category) => (
-          <Col key={category._id} span={6}>
-            <Card
-              hoverable
-              style={{ width: '100%' }}
-              cover={<img alt={category.category_name} src={`${category.images[0]?.url}`} className="category-image" />}
-              onClick={() => handleCardClick(category.category_id)} // Gọi hàm khi  nhấn vào Card
-            >
-              <Meta title={category.category_name} description={`Mã danh mục: ${category.category_id}`} />
-            </Card>
-          </Col>
-        ))}
-      </Row>
+      <div className='content-header' >
+        <div className='admin-search'>
+        <Search placeholder="Nhập thông tin tìm kiếm " enterButton="Tìm kiếm"   style={{ width: 350 }} />
+        </div>
+        <div className='create'>
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={() => console.log('Tạo mới')}
+        >
+          Create
+        </Button>
+        </div>
+      </div>
+      <div className='category-table'>
+      <Table columns={columns} dataSource={categories} />
+      </div>
     </div>
   );
 }

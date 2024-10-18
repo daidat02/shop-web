@@ -10,3 +10,8 @@
     justify-content: center;
 }
 
+.content-header{
+    padding-bottom: 50px;
+    display: flex;
+    justify-content: space-between;
+}

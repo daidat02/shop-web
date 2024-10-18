@@ -12,6 +12,14 @@ const CategorySchema = new Schema({
         type : String,
         required:true
     },
+    state:{
+        type:String,
+        enum:{
+            values:['active',' inactive'],
+        },
+        default: 'active'
+    },
+
     products:{
         type:[ObjectId],
         ref: DB_SCHEMA.PRODUCT

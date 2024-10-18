@@ -1,7 +1,7 @@
 import {v4 as uuidv4} from "uuid"
 const API_PATH = {
     //authentication
-    SENT_OTP:"/otp/sent-otp",
+    SEND_OTP:"/otp/send-otp",
     CHECK_OTP:"/otp/check-otp",
     REG_ACC: "/auth/reg",
     LOGIN: "/auth/login",

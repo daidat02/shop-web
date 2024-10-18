@@ -1,5 +1,5 @@
 import axios from "axios"
-import { loginSuccess, registerSuccess, sentOtpSuccess } from "../redux/slice/auth";
+import { loginSuccess, registerSuccess, sendOtpSuccess } from "../redux/slice/auth";
 
 
 export const loginUser = async(dispatch,navigate,loginData)=>{
@@ -13,10 +13,10 @@ export const loginUser = async(dispatch,navigate,loginData)=>{
     }
 }
 
-export const sentOTP = async(dispatch,email)=>{
+export const sendOTP = async(dispatch,email)=>{
     try {
-        const res = await axios.post(`/otp/sent-otp`, {email:email});
-        dispatch(sentOtpSuccess(res.data));
+        const res = await axios.post(`/otp/send-otp`, {email:email});
+        dispatch(sendOtpSuccess(res.data));
         return{success:true}
     } catch (error) {
         return { success: false, error: error.message };    

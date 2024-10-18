@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { message } from "antd";
 import { UserOutlined, LockOutlined, Loading3QuartersOutlined } from '@ant-design/icons'; // Import icon loading
 import OtpInput from "./otpInput";
-import { registerAccount, sentOTP } from "../../api/API_Auth";
+import { registerAccount, sendOTP } from "../../api/API_Auth";
 import NotificationMessage from "../Message/NotificationMessage";
 
 const Register = () => {
@@ -28,7 +28,7 @@ const Register = () => {
         setLoading(true);
 
         // Call BE API
-        const respone = await sentOTP(dispatch, regData.email);
+        const respone = await sendOTP(dispatch, regData.email);
         
         // Tắt loading sau khi nhận phản hồi
         setLoading(false);

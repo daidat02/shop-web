@@ -5,7 +5,9 @@ import { useDispatch } from 'react-redux';
 import { createProduct, getProductByCategory } from '../../../../api/API_Product';
 import { uploadImages } from '../../../../api/API_Upload';
 import NotificationMessage from '../../../Message/NotificationMessage';
-const CreateProduct = ({ categoryId }) => { // Nhận categoryId và onClose như props
+import RichTextEditor from '../../Description/Description';
+
+const CreateProduct = ({ categoryId }) => { 
   const dispatch = useDispatch();
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
@@ -23,7 +25,7 @@ const CreateProduct = ({ categoryId }) => { // Nhận categoryId và onClose nh�
 
   const onFinish = async (values) => {
     if (imageUrls.length === 0) {
-      NotificationMessage.error('Ảnh chưa được tải lên!!!');
+      NotificationMessage.error('Ảnh chưa được tải lên!');
       return;
     }
 
@@ -33,7 +35,6 @@ const CreateProduct = ({ categoryId }) => { // Nhận categoryId và onClose nh�
       images: imageUrls.map(url => ({ url })),
     };
 
-    console.log(productData)
     try {
       const result = await createProduct(dispatch, categoryId, productData);
       if (result.success) {
@@ -41,57 +42,68 @@ const CreateProduct = ({ categoryId }) => { // Nhận categoryId và onClose nh�
         form.resetFields();
         setFileList([]);
         setImageUrls([]);
-        await getProductByCategory(dispatch,categoryId);
+        await getProductByCategory(dispatch, categoryId);
       } else {
-        NotificationMessage.error('Tạo sản phẩm thất bại!', result.error);
+        NotificationMessage.error('Tạo sản phẩm thất bại!');
       }
     } catch (error) {
-      console.log(error);
+      NotificationMessage.error('Lỗi khi tạo sản phẩm. Vui lòng thử lại.');
     }
   };
 
   return (
-    <Form form={form} layout="vertical" onFinish={onFinish}>
-      <Form.Item name="product_id" label="Mã sản phẩm" rules={[{ required: true }]}>
-        <Input />
-      </Form.Item>
-      <Form.Item name="product_name" label="Tên sản phẩm" rules={[{ required: true }]}>
-        <Input />
-      </Form.Item>
-      <Form.Item name="description" label="Giới thiệu">
-        <Input.TextArea />
-      </Form.Item>
-      <Form.Item name="brand" label="Nhãn hàng" rules={[{ required: true }]}>
-        <Input />
-      </Form.Item>
-      <Form.Item name="price" label="Giá" rules={[{ required: true }]}>
-        <Input />
-      </Form.Item>
-      <Form.Item name="quantity" label="Kho" rules={[{ required: true }]}>
-        <Input />
-      </Form.Item>
-      <Form.Item name="productType" label="Loại sản phẩm" rules={[{ required: true }]}>
-        <Input />
-      </Form.Item>
+    <div className='create-form-container'>
 
-      {/* Upload ảnh */}
-      <Form.Item label="Tải ảnh lên">
-        <Upload
-          customRequest={({ file }) => handleUpload(file)}
-          listType="picture"
-          fileList={fileList}
-          onChange={({ fileList }) => setFileList(fileList)}
-        >
-          <Button icon={<UploadOutlined />}>Upload Image</Button>
-        </Upload>
-      </Form.Item>
+    <div className='create-form'>
+    <Form form={form} layout="vertical" onFinish={onFinish} >
+        <div className='form-input'>
+        <Form.Item name="product_id" label="Mã sản phẩm" rules={[{ required: true }]}>
+          <Input />
+        </Form.Item>
+        <Form.Item name="product_name" label="Tên sản phẩm" rules={[{ required: true }]}>
+          <Input />
+        </Form.Item>
+        <Form.Item name="description" label="Giới thiệu">
+          <Input.TextArea />
+        </Form.Item>
+        <Form.Item name="brand" label="Nhãn hàng" rules={[{ required: true }]}>
+          <Input />
+        </Form.Item>
+        <Form.Item name="price" label="Giá" rules={[{ required: true, type: 'number', min: 0, message: 'Giá phải là số dương!' }]}>
+          <Input type="number" />
+        </Form.Item>
+        <Form.Item name="quantity" label="Kho" rules={[{ required: true, type: 'number', min: 0, message: 'Số lượng phải là số dương!' }]}>
+          <Input type="number" />
+        </Form.Item>
+        <Form.Item name="productType" label="Loại sản phẩm" rules={[{ required: true }]}>
+          <Input />
+        </Form.Item>
 
+        <Form.Item label="Tải ảnh lên">
+          <Upload
+            customRequest={({ file }) => handleUpload(file)}
+            listType="picture"
+            fileList={fileList}
+            onChange={({ fileList }) => setFileList(fileList)}
+            onRemove={(file) => {
+              setFileList(fileList.filter(f => f.uid !== file.uid));
+            }}
+          >
+            <Button icon={<UploadOutlined />}>Upload Image</Button>
+          </Upload>
+        </Form.Item>
+          
+      </div>
+      <RichTextEditor/>
       <Form.Item>
-        <Button type="primary" htmlType="submit">
+        <Button type="primary" htmlType="submit" style={{ marginTop: '16px' }}>
           Tạo sản phẩm
         </Button>
       </Form.Item>
     </Form>
+    </div>
+    </div>
+
   );
 };
 

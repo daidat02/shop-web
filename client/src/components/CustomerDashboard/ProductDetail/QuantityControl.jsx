@@ -1,26 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus, Minus } from 'lucide-react';
 
-const QuantityControl = ({ onQuantityChange }) => {
-  const [quantity, setQuantity] = useState(1);
+const QuantityControl = ({ initialQuantity, onQuantityChange }) => {
+  const [quantity, setQuantity] = useState(initialQuantity || 1);
+
+  useEffect(() => {
+    setQuantity(initialQuantity);
+  }, [initialQuantity]);
 
   const handleIncrease = () => {
     const newQuantity = quantity + 1;
     setQuantity(newQuantity);
-    onQuantityChange(newQuantity);  // Gọi hàm callback để truyền giá trị về component cha
+    onQuantityChange(newQuantity);
   };
 
   const handleDecrease = () => {
-    if (quantity > 0) {
+    if (quantity > 1) {  // Đảm bảo số lượng không nhỏ hơn 1
       const newQuantity = quantity - 1;
       setQuantity(newQuantity);
-      onQuantityChange(newQuantity);  // Gọi hàm callback khi giảm giá trị
+      onQuantityChange(newQuantity);
     }
   };
 
   return (
     <div className="quantity">
-      
       <button className="minus" onClick={handleDecrease}>
         <Minus size={20} />
       </button>

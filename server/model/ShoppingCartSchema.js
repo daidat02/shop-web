@@ -11,7 +11,10 @@ const ShoppingCartSchema = new Schema({
             priceTotal: { type: Number, required: false }
         }
     ],
-  
+    count: {
+        type:Number,
+        max: 99,
+    }
 },{ timestamps: true });
 
 const ShoppingCart = mongoose.model('ShoppingCart', ShoppingCartSchema);

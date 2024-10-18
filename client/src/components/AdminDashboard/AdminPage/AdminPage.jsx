@@ -48,9 +48,11 @@ const AdminHome = () => {
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
+     
       <AdminSider onCreateCategoryClick={() => showDrawer(<CreateCategoryForm />)} />
+   
       <Layout>
-        <Header style={{ padding: 0, background: colorBgContainer }} />
+        <Header style={{ padding: 0, background: colorBgContainer }}  >HEADER</Header>
         <Content style={{ margin: '0 16px' }}>
           <Breadcrumb style={{ margin: '16px 0' }}>{breadcrumbItems}</Breadcrumb>
           <div
@@ -76,9 +78,11 @@ const AdminHome = () => {
               <Route
                 path="products/:categoryId"
                 element={
-                  <AdminProduct onCreateProductClick={(categoryId) => showDrawer(<CreateProduct />, categoryId)} />
+                  <AdminProduct />
                 }
               />
+              <Route path="/create-product/:categoryId" element={<CreateProduct />} />
+
             </Routes>
           </div>
         </Content>

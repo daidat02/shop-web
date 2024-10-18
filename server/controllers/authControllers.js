@@ -16,7 +16,7 @@ function generateOTP(length = 6) {
 }
 
 
-const sentOTP = async (req, res) => {
+const sendOTP = async (req, res) => {
     const { email } = req.body;
     const otp = generateOTP();
     
@@ -118,7 +118,7 @@ const loginUser = async (req,res)=>{
     try {
         const account = await DB_Connection.Account.findOne({email:email}).populate('user');
         if(!account){
-            return res.status(STATUS.NOT_FOUND).json({message: 'Không tìm thấy email'});
+            return res.status(STATUS.NOT_FOUND).json({message: 'email không tồn tại!!'});
         }
         const validPassword = await bcrypt.compare(
             password,
@@ -142,4 +142,4 @@ const loginUser = async (req,res)=>{
 }
 
 // Xuất hàm registerAccount
-export { registerAccount , generateAccessToken , generateRefressToken, loginUser ,sentOTP , checkOTP};
+export { registerAccount , generateAccessToken , generateRefressToken, loginUser ,sendOTP , checkOTP};

@@ -1,0 +1,244 @@
+/* cart.css */
+
+.cart-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    padding-bottom: 120px;
+}
+
+.cart-header {
+    background: linear-gradient(to right, #3b82f6, #1d4ed8);
+    color: #ffffff;
+    padding: 1.5rem 2rem;
+}
+
+.cart-header h2 {
+    font-size: 1.875rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+}
+
+.cart-header h2 svg {
+    margin-right: 1rem;
+}
+
+.cart-item-container {
+    flex-grow: 1; /* Cho phép container giỏ hàng mở rộng */
+}
+
+
+.cart-item-title {
+    display: flex;
+    background: #ffffff;
+    margin: 10px 0;
+    height: 55px;
+    align-items: center;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+    padding: 0 20px;
+}
+
+.checkbox-container {
+    padding: 0 5px;
+}
+
+.check-box {
+    width: 18px;
+    height: 18px;
+    padding: 10px;
+}
+
+.title-product {
+    width: 50%;
+    text-align: center;
+}
+
+.cart-item-title div {
+    font-size: 14px;
+}
+
+.title-price,
+.title-quantity,
+.title-total-price,
+.title-actions {
+    width: 14%;
+    text-align: center;
+}
+
+.cart-item-content {
+    flex-grow: 1;
+    width: 100%;
+}
+
+.cart-item {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #e5e7eb;
+    transition: background-color 0.3s ease;
+    background: #ffffff;
+    margin: 10px 0;
+    padding: 20px 20px;
+}
+
+.cart-item-image {
+    width: 5rem;
+    height: 5rem;
+    object-fit: cover;
+    border-radius: 0.375rem;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.cart-item-details {
+    width: 50%;
+    margin-left: 1rem;
+    display: flex;
+}
+
+.cart-item-name {
+    font-weight: 600;
+    font-size: 1.125rem;
+    color: #1f2937;
+}
+
+.cart-item-type {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.cart-item-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    width: 14%;
+}
+
+.quantity {
+    justify-content: center;
+}
+
+.quantity-control {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+}
+
+.quantity-button {
+    color: #3b82f6;
+    transition: color 0.3s ease;
+}
+
+.quantity-button:hover {
+    color: #1d4ed8;
+}
+
+.quantity-value {
+    font-weight: 600;
+    color: #4b5563;
+    width: 2rem;
+    text-align: center;
+}
+
+.cart-item-price {
+    font-weight: 600;
+    font-size: 1.125rem;
+    color: #1f2937;
+    width: 7rem;
+    text-align: right;
+    margin: 0;
+}
+
+.remove-button {
+    color: #ef4444;
+    transition: all 0.3s ease;
+    padding: 0.25rem;
+    border-radius: 3px;
+    border: solid 0.8px #000;
+    background: none;
+}
+
+.remove-button:hover {
+    color: #dc2626;
+    background-color: #fee2e2;
+}
+.pay-container {
+    position: sticky;  /* Dính cố định */
+    position: -webkit-sticky;
+    bottom: 0;        /* Đặt ở dưới cùng */
+    margin-bottom: 100px;
+    background-color: #ffffff; /* Nền trắng để nổi bật */
+    padding: 1.5rem;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1); /* Đổ bóng để tạo chiều sâu */
+    z-index: 1000;    /* Đảm bảo nó nằm trên các thành phần khác nếu cần */
+}
+
+.pay-container h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem; /* Giảm khoảng cách dưới tiêu đề */
+    color: #1f2937;
+}
+
+.total-price {
+    font-size: 1.875rem;
+    font-weight: 700;
+    margin: 0.5rem 0 1rem; /* Tạo khoảng cách phía trên và dưới */
+    color: #3b82f6;
+}
+
+.shipping-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+}
+
+.shipping-input:focus {
+    outline: none;
+    border-color: #3b82f6; /* Màu biên khi focus */
+    box-shadow: 0 0 5px rgba(59, 130, 246, 0.5); /* Đổ bóng khi focus */
+}
+
+.order-button {
+    width: 100%;
+    background-color: #3b82f6;
+    color: #ffffff;
+    padding: 0.75rem 1rem;
+    border-radius: 0.375rem;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+    border: none; /* Bỏ biên mặc định */
+}
+
+.order-button:hover {
+    background-color: #2563eb;
+}
+
+.empty-cart-message {
+    text-align: center;
+    color: #6b7280;
+    padding: 2rem 0;
+}
+
+
+.quantity {
+    display: flex;
+    align-items: center;
+}
+
+.quantity button {
+    background: none;
+    border: 1px solid #ddd;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.quantity-number {
+    padding: 0 10px;
+}

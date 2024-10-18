@@ -29,6 +29,10 @@ const categorySlice = createSlice({
 
         getproductDetailSuccess:(state,action)=>{
             state.productDetail= action.payload
+        },
+
+        addProdToCartSuccess:(state)=>{
+            state.success= true
         }
         
     }
@@ -38,7 +42,8 @@ export const{
     createProductSuccess,
     getProductsSuccess,
     deleteProductSuccess,
-    getproductDetailSuccess
+    getproductDetailSuccess,
+    addProdToCartSuccess
 } = categorySlice.actions
 
 export default categorySlice.reducer

@@ -8,6 +8,8 @@ import './customer.css'
 import Product from "./Product/Product";
 import ProductDetail from "./ProductDetail/ProductDetail";
 import Register from "../Auth/register";
+import ShoppingCart from "./ShopingCart/ShopingCart";
+import OrderPage from "./Order/Order";
 const CustomerPage = ()=>{
     return(
         <div className="main">
@@ -20,6 +22,8 @@ const CustomerPage = ()=>{
                 <Route path='/product-detail/:productId' element={<ProductDetail/>} />
                 <Route path='/login' element = {<Login/>}/>
                 <Route path='/register' element = {<Register/>}/>
+                <Route path='/cart' element = {<ShoppingCart/>}/>
+                <Route path='/order' element = {<OrderPage/>}/>
                 {/* <HomePage/> */}
             </Routes>
             </div>

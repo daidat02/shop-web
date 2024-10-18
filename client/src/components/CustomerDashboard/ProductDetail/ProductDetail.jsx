@@ -4,14 +4,18 @@ import './productdetail.css';
 import { ShoppingCart } from 'lucide-react';
 import QuantityControl from './QuantityControl';
 import { useDispatch, useSelector } from 'react-redux';
-import { getProductDetail } from '../../../api/API_Product';
+import { addProdToCart, getProductDetail } from '../../../api/API_Product';
+import NotificationMessage from '../../Message/NotificationMessage';
 
 const ProductDetail = () => {
     const { productId } = useParams();
+    const account = useSelector((state) => state.auth?.account);
+    const accessToken = account?.accessToken;
     const initialProdDetail = useSelector((state) => state.products.productDetail);
     const dispatch = useDispatch();
     const [product, setProduct] = useState(initialProdDetail);
     const [quantity, setQuantity] = useState(1);
+    const [addData, setAddData] = useState({ product_id: '', quantity: '' });
 
     useEffect(() => {
         getProductDetail(dispatch, productId);
@@ -29,9 +33,24 @@ const ProductDetail = () => {
         }
     };
 
-    const handleAddToCart = () => {
-        // Logic thêm sản phẩm vào giỏ hàng
-        console.log('Sản phẩm đã được thêm vào giỏ hàng',quantity,product._id);
+    useEffect(() => {
+        if (product) {
+            setAddData({ product_id: product.product_id, quantity });
+        }
+    }, [product, quantity]);
+
+    const handleAddToCart = async () => {
+        try {
+            const result = await addProdToCart(accessToken, dispatch, addData);
+
+            if (result.success) {
+                NotificationMessage.success('Thêm sản phẩm thành công!');
+            } else {
+                NotificationMessage.error('Tạo sản phẩm thất bại!', result.error);
+            }
+        } catch (error) {
+            NotificationMessage.error('Đã xảy ra lỗi khi thêm sản phẩm vào giỏ hàng.');
+        }
     };
 
     const handleBuyNow = () => {
@@ -42,7 +61,7 @@ const ProductDetail = () => {
     if (!product || Object.keys(product).length === 0) {
         return <div>Loading...</div>;
     }
-        
+
     return (
         <div className="product-detail-container">
             <div className="product-detail">
@@ -61,7 +80,10 @@ const ProductDetail = () => {
                             {product?.description}
                         </div>
 
-                        <QuantityControl quantity={quantity} onQuantityChange={handleQuantityChange} />
+                        <QuantityControl 
+                            initialQuantity={quantity} // Thay đổi đây để truyền initialQuantity
+                            onQuantityChange={handleQuantityChange} 
+                        />
                     </div>
                     <div className="product-actions">
                         <div className="add-product-cart">
@@ -74,6 +96,7 @@ const ProductDetail = () => {
                     </div>
                 </div>
             </div>
+            
         </div>
     );
 };
