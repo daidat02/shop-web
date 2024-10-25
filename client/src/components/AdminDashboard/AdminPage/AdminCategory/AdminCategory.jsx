@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Space, Table, Tag,Switch, Input,Button } from 'antd';
-import {DeleteOutlined ,PlusOutlined} from '@ant-design/icons';
+import {DeleteOutlined ,PlusOutlined , EyeOutlined} from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCategories } from '../../../../api/API_Category';
 import { useNavigate } from 'react-router-dom'; // Sử dụng useNavigate để điều hướng
@@ -33,7 +33,7 @@ function AdminCategory() {
   
   const columns = [
     {
-      title: 'ID',
+      title: 'STT',
          render: (_, __, index) => `#${index + 1}`,
         width: "20px"
     },
@@ -69,17 +69,28 @@ function AdminCategory() {
       key: 'action',
       render: (_, record) => (
         <Space size="middle">
-          <a onClick={()=> handleClick(record.category_id)}>Chi tiết </a>
-          <DeleteOutlined 
-            style={{ color: 'red', cursor: 'pointer', fontSize: '16px' }} 
-            onClick={() => handleDelete(record._id)} 
-          />     
+          <Button 
+            type="default" 
+            icon={<EyeOutlined />} 
+            onClick={() => handleClick(record.category_id)}
+            style={{ borderColor: 'gray', color: 'gray' }} 
+            ghost
+          >
+          </Button>
+          <Button 
+            type="default" 
+            icon={<DeleteOutlined />} 
+            onClick={() => handleDelete(record._id)}
+            style={{ borderColor: 'red', color: 'red' }}
+            ghost
+          >
+          </Button>
         </Space>
       ),
-      width:"20%",
-      align: 'center' // Căn giữa nội dung cột
-  
-    },
+      width: "20%",
+      align: 'center'
+    }
+    
   ];
   
   return (

@@ -2,16 +2,33 @@
     background: #fff !important;
 }
 
-.header-menu{
-    height: 64px;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    justify-content: center;
-}
+body{
+    font-family: 'Nunito Sans', sans-serif;
 
+}
+body, .ant-typography, .ant-btn, .ant-menu, .ant-input, .ant-table, .ant-select, .ant-card, .ant-table-cell, .ant-breadcrumb-link {
+    font-family: 'Nunito Sans', sans-serif;
+}
+.ant-layout-header{
+    border-bottom: solid 0.3px #cbd0dd;
+
+}
+.ant-layout-sider {
+    margin-top: 70px;
+    background: #fff;
+    border-right: solid 0.3px #cbd0dd;
+}
+.ant-menu{
+    font-size: 13px;
+    font-weight: 600;
+    color:#808080 ;
+}
 .content-header{
     padding-bottom: 50px;
     display: flex;
     justify-content: space-between;
+}
+
+.ant-layout{
+    background: #F5F7FA;
 }

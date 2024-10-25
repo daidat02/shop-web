@@ -62,3 +62,22 @@ export const addProdToCart = async(accessToken, dispacth, data)=>{
         return {success:false}
     }
 }
+
+export const getTags = async()=>{
+    try {
+        const res = await axios.get(`/tag/`);
+        return res.data
+    } catch (error) {
+        return error;
+    }
+}
+
+export const getVariants = async()=>{
+    try {
+        const res = await axios.get(`/variant`);
+
+        return res.data
+    } catch (error) {
+        return error;
+    }
+}

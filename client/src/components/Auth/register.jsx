@@ -47,11 +47,16 @@ const Register = () => {
 
         try {
             setLoading(true);
-            await registerAccount(dispatch, navigate, updatedData);
+           const respone = await registerAccount(dispatch, navigate, updatedData);
+           if(respone.success){
+            NotificationMessage.success("Đăng ký tài khoản thành công!!");
             setLoading(false)
             console.log("Login Successful", otp);
+           }else{
+            NotificationMessage.error("Đăng ký tài khoản không thành công thành công!!");
+           }
         } catch (error) {
-            console.log(error);
+            NotificationMessage.error(error.message);
         }
     };
 

@@ -15,7 +15,6 @@ const RichTextEditor = () => {
 
   return (
     <div className="w-full max-w-4xl mx-auto">
-      <h2 className="text-lg font-semibold mb-4">Giới Thiệu Sản Phẩm</h2>
       
       {/* React-Quill Editor */}
       <ReactQuill
@@ -23,25 +22,24 @@ const RichTextEditor = () => {
         onChange={handleEditorChange}
         theme="snow" // Chủ đề của Quill (có thể dùng 'bubble' hoặc 'snow')
         placeholder="Nhập nội dung của bạn..."
-        style={{ height: '300px', marginBottom: '50px' }} // Tùy chỉnh chiều cao của editor
+        style={{ height: '160px' ,background:'#fff', marginBottom:'70px '}} // Tùy chỉnh chiều cao của editor
       />
       
       {/* Xem trước nội dung */}
-      <div className="bg-gray-100 p-4 mt-4 rounded-lg">
-        <h3 className="text-lg font-semibold mb-2">Xem trước nội dung:</h3>
+      {/* <div className="bg-gray-100 p-4 mt-4 rounded-lg">
         <div
           className="preview-content"
           dangerouslySetInnerHTML={{ __html: editorContent }} // Hiển thị nội dung dạng HTML
         />
-      </div>
+      </div> */}
 
       {/* Nút gửi */}
-      <button
+      {/* <button
         onClick={handleSubmit}
         className="mt-4 p-2 bg-blue-500 text-white rounded hover:bg-blue-700"
       >
         Gửi
-      </button>
+      </button> */}
     </div>
   );
 };

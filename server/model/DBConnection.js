@@ -6,6 +6,8 @@ import Brand from './BrandSchema.js';
 import ShoppingCart from './ShoppingCartSChema.js';
 import Order from './OrderSchema.js';
 import OTP from './OTPSchema.js';
+import Variant from './VariantSchema.js';
+import Tag from './TagSchema.js';
 const DB_Connection = {
      Account,
      User,
@@ -14,7 +16,9 @@ const DB_Connection = {
      Brand,
      ShoppingCart,
      Order,
-     OTP
+     OTP,
+     Variant,
+     Tag
 };
 
 // Xuất DB_Connection

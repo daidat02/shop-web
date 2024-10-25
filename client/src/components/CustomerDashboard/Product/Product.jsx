@@ -8,6 +8,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { getProducts } from '../../../api/API_Product';
 import { getCategories } from '../../../api/API_Category';
 
+import { EditOutlined, EllipsisOutlined, SettingOutlined } from '@ant-design/icons';
+import { Avatar, Card ,Rate} from 'antd';
+
+const { Meta } = Card;
+
 
 const Product = () => {
 
@@ -50,7 +55,7 @@ const Product = () => {
                 <Slider {...settings}>
                     {slider.images.map((image, index) => (
                         <div key={index}>
-                            <img src={image} alt={`Sản phẩm ${index + 1}`} /> {/* Đã đơn giản hóa alt text */}
+                            <img src={image} alt={`Sản phẩm ${index + 1}`} /> 
                         </div>
                     ))}
                 </Slider>
@@ -73,6 +78,8 @@ const Product = () => {
                         </div>
                     ))}
                 </div>
+                
+                
             </div>
         </div>
     );

@@ -15,6 +15,11 @@ const API_PATH = {
     CREATE_PROD:"/prod/create",
     DELETE_PROD:"/prod/:categoryId/:productId",
     GET_PROD_DETAIL:"/prod-detail/:productId",
+    CREATE_VARIANT:"/variant/create",
+    GET_VARIANT: "/variant/",
+
+    CREATE_TAG:"/tag/create",
+    GET_TAG:"/tag/",
     //shopping cart
     GET_SHOPPINGCART:"/shopping/",
     ADD_TO_SHOPPINGCART:"/shopping/add",
@@ -47,7 +52,9 @@ const DB_SCHEMA = {
     CATEGORY:'Category',
     PRODUCT:'Product',
     SHOPINGCART:'ShoppingCart',
-    ORDER: 'Order'
+    ORDER: 'Order',
+    VARIANT:'Variant',
+    TAG: 'Tag'
 };
 
 

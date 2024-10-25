@@ -38,6 +38,32 @@ const ProductSchema = new Schema({
             url: { type: String, required: true }, // URL của ảnh
         }
     ],
+
+    tags:[
+        {tag:{
+            type:ObjectId,
+            ref: DB_SCHEMA.TAG,
+            required:true
+        }}
+    ],
+
+    category:{
+        type:ObjectId,
+        ref:DB_SCHEMA.CATEGORY,
+        required:true
+    },
+
+    colection:{
+        type:String,
+    },
+
+    state:{
+        type:String,
+        enum:{
+            values:['active', 'inactive']
+        },
+        default:'active'
+    }
     
     
 },{ timestamps: true });

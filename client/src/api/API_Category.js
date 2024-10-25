@@ -12,11 +12,11 @@ export const createCategory = async(dispacth, data)=>{
     }
 }
 
-export const getCategories =async(dispacth)=>{
+export const getCategories =async()=>{
     try {
         const res = await axios.get(`/cat/get`)
-
-        dispacth(getCategoriesSuccess(res.data));
+        return res.data
+        // dispacth(getCategoriesSuccess(res.data));
     } catch (error) {
         console.log(error);
     }
