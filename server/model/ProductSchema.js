@@ -38,7 +38,7 @@ const ProductSchema = new Schema({
             url: { type: String, required: true }, // URL của ảnh
         }
     ],
-
+    
     tags:[
         {tag:{
             type:ObjectId,

@@ -3,11 +3,7 @@ import { DB_SCHEMA } from "../configs/Constants.js";
 const Schema = mongoose.Schema
 
 const BrandSchema = new Schema({
-    brand_id:{
-        type: String,
-        required: true,
-        unique:true
-    },
+  
     brand_name:{
         type : String,
         required:true
@@ -16,7 +12,7 @@ const BrandSchema = new Schema({
         type: String,
         required:false
     },
-    origin: { type: String, required: true },  
+    origin: { type: String, required: false },  
 })
 
 const Brand = mongoose.model(DB_SCHEMA.BRAND,BrandSchema);

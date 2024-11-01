@@ -26,6 +26,11 @@ const items = [
     icon: <AppstoreOutlined />,
     label: 'Danh Mục ',
   },
+  {
+    key: '/admin/products',
+    icon: <AppstoreOutlined />,
+    label: 'Sản Phẩm ',
+  },
   
   {
     key: '/admin/order',

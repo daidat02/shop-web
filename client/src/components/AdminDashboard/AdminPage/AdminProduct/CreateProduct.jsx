@@ -7,6 +7,7 @@ import {uploadImages} from '../../../../api/API_Upload'
 import NotificationMessage from '../../../Message/NotificationMessage';
 import RichTextEditor from '../../Description/Description';
 import { getCategories } from '../../../../api/API_Category';
+import { getBrand } from '../../../../api/API_Brand';
 
 const { Dragger } = Upload;
 const { Option } = Select;
@@ -19,14 +20,15 @@ const CreateProduct = ({ categoryId }) => {
   const [categories, setCategories] = useState([]);
   const [tags, setTags] = useState([]);
   const [variants, setVariants] = useState([]);
+  const [brands,setBrands] = useState([])
   const [availableOptions, setAvailableOptions] = useState([]);
   const [productData, setProductData] = useState({
-    title: '',
+    product_name: '',
     description: '',
-    regularPrice: '',
-    salePrice: '',
-    stock: '',
+    price: '',
+    quantity: '',
     category: '',
+    productType:'',
     brand: '',
     collection: '',
     tags: [],
@@ -40,6 +42,8 @@ const CreateProduct = ({ categoryId }) => {
             setTags(tagData.data);
             const variantsData = await getVariants();
             setAvailableOptions(variantsData.data)
+            const brandData = await getBrand();
+            setBrands(brandData);
         } catch (error) {
             console.log("Không thể tải danh mục"); // Thiết lập thông báo lỗi nếu có
         }
@@ -72,7 +76,6 @@ const uploadProps = {
   },
 };
 
-
 const onFinish = async () => {
   if (imageUrls.length === 0) {
     NotificationMessage.error('Ảnh chưa được tải lên!');
@@ -81,37 +84,40 @@ const onFinish = async () => {
 
   const productDataToSubmit = {
     ...productData,
-    category_id: categoryId,
     images: imageUrls.map(url => ({ url })),
+    tags: productData.tags.map(tag => ({ tag })),
   };
 
-  console.log(productDataToSubmit);
   try {
-    // const result = await createProduct(dispatch, categoryId, productDataToSubmit);
-    // if (result.success) {
-    //   NotificationMessage.success('Tạo sản phẩm thành công!');
-    //   form.resetFields();
-    //   setFileList([]);
-    //   setImageUrls([]);
-    //   setProductData({
-    //     title: '',
-    //     description: '',
-    //     regularPrice: '',
-    //     salePrice: '',
-    //     stock: '',
-    //     category: '',
-    //     brand: '',
-    //     collection: '',
-    //     tags: [],
-    //   });
-    // } else {
-    //   NotificationMessage.error('Tạo sản phẩm thất bại!');
-    // }
+    const result = await createProduct(dispatch, productDataToSubmit);
+    if (result.success) {
+      NotificationMessage.success('Tạo sản phẩm thành công!');
+      form.resetFields();
+      
+      // Resetting state values
+      setFileList([]);
+      setImageUrls([]);
+      setProductData({
+        product_name: '',
+        description: '',
+        price: '',
+        salePrice: '',
+        quantity: '',
+        category: '',
+        productType: '',
+        brand: '',
+        collection: '',
+        tags: [],
+      });
+      setVariants([]);
+      setAvailableOptions([]);
+    } else {
+      NotificationMessage.error('Tạo sản phẩm thất bại!');
+    }
   } catch (error) {
     NotificationMessage.error('Lỗi khi tạo sản phẩm. Vui lòng thử lại.');
   }
 };
-
 
   // Hàm để thêm Option mới
   const handleAddVariant = () => {
@@ -175,7 +181,7 @@ const onFinish = async () => {
         <div className='create-form'>
           <h3 className='input-title'>Product Title</h3>
           <Input style={{ padding: '7px 0' }} 
-            onChange={(e) => handleInputChange('title', e.target.value)} 
+            onChange={(e) => handleInputChange('product_name', e.target.value)} 
           />
           <h3 className='input-title'>Product Description</h3>
           <RichTextEditor 
@@ -202,7 +208,7 @@ const onFinish = async () => {
               <div>
                 <h4 className='input-title'>Regular price</h4>
                 <Input placeholder='$$$' style={{ width: 200, padding: '8px 5px', margin: 0 }} 
-                  onChange={(e) => handleInputChange('regularPrice', e.target.value)} 
+                  onChange={(e) => handleInputChange('price', e.target.value)} 
                 />
               </div>
               <div>
@@ -219,11 +225,24 @@ const onFinish = async () => {
               <div>
                 <h4 className='input-title'>Add to Stock</h4>
                 <Input placeholder='$$$' type='number' style={{ width: 200, padding: '8px 5px', margin: 0 }}
-                  onChange={(e) => handleInputChange('stock', e.target.value)} 
+                  onChange={(e) => handleInputChange('quantity', e.target.value)} 
                 />
               </div>
             </div>
           </div>
+
+          <div className='pricing-container'>
+            <span>Product Type</span>
+            <div className='pricing-content'>
+              <div>
+                <h4 className='input-title'>Type</h4>
+                <Input placeholder='$$$'  style={{ width: 200, padding: '8px 5px', margin: 0 }}
+                  onChange={(e) => handleInputChange('productType', e.target.value)} 
+                />
+              </div>
+            </div>
+          </div>
+
         </div>
 
         <div className='select-container'>
@@ -245,9 +264,10 @@ const onFinish = async () => {
               <Select placeholder="Brand"
                 onChange={(value) => handleInputChange('brand', value)}
               >
-                <Option value="1">Option 1</Option>
-                <Option value="2">Option 2</Option>
-                <Option value="3">Option 3</Option>
+              {brands.data?.map((brand)=>(
+                 <Option key={brand._id} value={brand._id}>{brand.brand_name}</Option>
+              ))}      
+              
               </Select>
             </div>
 

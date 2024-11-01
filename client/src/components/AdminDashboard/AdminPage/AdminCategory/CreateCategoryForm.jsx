@@ -46,7 +46,6 @@ const CreateCategoryForm = () => {
         form.resetFields(); // Reset form
         setFileList([]); // Xóa danh sách file đã upload
         setImageUrls([]); // Xóa danh sách URL hình ảnh
-        getCategories(dispatch);
       } else {
         message.error('Tạo danh mục thất bại!', result.error);
       }

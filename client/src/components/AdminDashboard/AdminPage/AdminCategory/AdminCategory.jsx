@@ -1,117 +1,269 @@
-import React, { useEffect } from 'react';
-import { Space, Table, Tag,Switch, Input,Button } from 'antd';
-import {DeleteOutlined ,PlusOutlined , EyeOutlined} from '@ant-design/icons';
-import { useDispatch, useSelector } from 'react-redux';
-import { getCategories } from '../../../../api/API_Category';
-import { useNavigate } from 'react-router-dom'; // Sử dụng useNavigate để điều hướng
+import React, { useEffect, useState } from 'react';
+import { Space, Table, Tag, Switch, Input, Button, Select, Breadcrumb, Drawer, Form, message, Upload, Modal } from 'antd';
+import { DeleteOutlined, PlusOutlined, SearchOutlined, ExportOutlined, UploadOutlined } from '@ant-design/icons';
+import { useDispatch } from 'react-redux';
+import { getCategories, createCategory, deleteCategory } from '../../../../api/API_Category';
+import { uploadImages } from '../../../../api/API_Upload';
+import { useNavigate } from 'react-router-dom';
+import CreateCategoryForm from './CreateCategoryForm';
 
 const { Search } = Input;
-
-const onChange = (checked) => {
-  console.log(`switch to ${checked}`);
-};
-
-
+const { Option } = Select;
 
 function AdminCategory() {
   const dispatch = useDispatch();
-  const categories = useSelector((state) => state.categories.categories);
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   
-  useEffect(() => {
-    getCategories(dispatch);
-  },[dispatch]);
+  const [categories, setCategories] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [fileList, setFileList] = useState([]); // Danh sách file đã upload
+  const [imageUrls, setImageUrls] = useState([]); // Danh sách URL hình ảnh
+  const [form] = Form.useForm();
 
-  // Hàm xử lý khi nhấn vào Card
+  const fetchCategories = async () => {
+    try {
+      const categoriesData = await getCategories();
+      setCategories(categoriesData);
+    } catch (error) {
+      console.log("Không thể tải danh mục");
+    }
+  };
+
+  useEffect(() => {
+      fetchCategories();
+  }, []);
+
   const handleClick = (categoryId) => {
     navigate(`/admin/products/${categoryId}`);
   };
 
-  const handleDelete = (id)=>{
+  const handleUpload = async (file) => {
+    try {
+      const urls = await uploadImages(file);
+      setImageUrls((prevUrls) => [...prevUrls, ...urls]);
+      message.success('Upload ảnh thành công!');
+    } catch (error) {
+      message.error('Upload ảnh thất bại!');
+    }
+  };
 
-  }
+  const onFinish = async (values) => {
+    if (imageUrls.length === 0) {
+      message.error('Ảnh chưa được tải lên!!!');
+      return;
+    }
   
+    const categoryData = {
+      ...values,
+      images: imageUrls.map(url => ({ url }))
+    };
+
+    try {
+      const result = await createCategory(dispatch, categoryData);
+
+      if (result.success) {
+        message.success('Tạo danh mục thành công!');
+        form.resetFields();
+        setFileList([]);
+        setImageUrls([]);
+        fetchCategories();
+      } else {
+        message.error('Tạo danh mục thất bại!', result.error);
+      }
+    } catch (error) {
+      message.error('Lỗi khi tạo danh mục!');
+    }
+  };
+
+  const handleDelete = (id) => {
+    Modal.confirm({
+      title: 'Xác nhận xóa',
+      content: 'Bạn có chắc chắn muốn xóa danh mục này không?',
+      okText: 'Xóa',
+      okType: 'danger',
+      cancelText: 'Hủy',
+      onOk: async () => {
+        try {
+          await deleteCategory(id);
+          message.success('Xóa danh mục thành công!');
+          fetchCategories();
+        } catch (error) {
+          message.error('Không thể xóa danh mục');
+        }
+      },
+    });
+  };
+
+  const showDrawer = () => {
+    setOpen(true);
+  };
+
+  const onClose = () => {
+    setOpen(false);
+    form.resetFields();
+  };
+
   const columns = [
     {
-      title: 'STT',
-         render: (_, __, index) => `#${index + 1}`,
-        width: "20px"
+      title: 'TT',
+      render: (_, __, index) => `${index + 1}`,
+      width: 20,
     },
     {
-      title: 'Tên Danh Mục',
+      dataIndex: ['images', 0, 'url'],
+      key: 'url',
+      width: '55px',
+      render: (url) => (
+        <div style={{ border: '1px solid #ccc', borderRadius: 5, padding: '2px', display: 'inline-block' }}>
+          <img src={url} alt="Product" style={{ width: '50px', height: '50px' }} />
+        </div>
+      ),
+    },
+    {
+      title: 'Category Name',
       dataIndex: 'category_name',
       key: 'category_name',
-      width: "50%"
+      width: '300px',
+      render: (category_name) => <a>{category_name}</a>,
+      sorter: (a, b) => a.category_name.localeCompare(b.category_name),
     },
-   
     {
-      title: 'Trạng Thái',
-      key: 'state',
+      title: 'State',
       dataIndex: 'state',
-      render: (_, { state }) => (
-        <>
+      key: 'state',
+      width: '200px',
+      render: (state) => (
+        <span className="tag-container">
           <Tag color={state === 'active' ? 'green' : 'red'}>
-            {state === 'active' ? 'Active' : 'Inactive'}
+            {state === 'active' ? 'ACTIVE' : 'INACTIVE'}
           </Tag>
-          <Switch 
-            checked={state === 'active'}  
-            onChange={onChange}           // Hàm xử lý khi chuyển đổi trạng thái
-            style={{
-              marginLeft: 8,                
-            }}
-          />
-        </>
+        </span>
       ),
-      align: 'center'
     },
     {
-      title: 'Hành Động',
+      title: 'Action',
       key: 'action',
       render: (_, record) => (
         <Space size="middle">
-          <Button 
-            type="default" 
-            icon={<EyeOutlined />} 
-            onClick={() => handleClick(record.category_id)}
-            style={{ borderColor: 'gray', color: 'gray' }} 
-            ghost
-          >
-          </Button>
-          <Button 
-            type="default" 
-            icon={<DeleteOutlined />} 
+          <DeleteOutlined
+            style={{ color: 'red', cursor: 'pointer', fontSize: '16px' }}
             onClick={() => handleDelete(record._id)}
-            style={{ borderColor: 'red', color: 'red' }}
-            ghost
-          >
-          </Button>
+          />
         </Space>
       ),
-      width: "20%",
-      align: 'center'
-    }
-    
+      width: '200px',
+      align: 'center',
+    },
   ];
-  
+
   return (
-    <div style={{ padding: '20px' }}>
-      <div className='content-header' >
+    <div className='content-container'>
+      <Breadcrumb style={{ margin: '25px 50px' }}>
+        <Breadcrumb.Item><a>Admin</a></Breadcrumb.Item>
+        <Breadcrumb.Item>Products</Breadcrumb.Item>
+      </Breadcrumb>
+
+      <div className='title-container'>
+        <h1 className='content-title'>Categories</h1>
+      </div>
+
+      <div className='action-nav'>
         <div className='admin-search'>
-        <Search placeholder="Nhập thông tin tìm kiếm " enterButton="Tìm kiếm"   style={{ width: 350 }} />
+          <Input
+            prefix={<SearchOutlined style={{ color: '#8a94ad' }} />}
+            placeholder="Search Products"
+            size="middle"
+            style={{
+              width: 300,
+              padding: '6px 10px',
+            }}
+          />
         </div>
-        <div className='create'>
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={() => console.log('Tạo mới')}
-        >
-          Create
-        </Button>
+
+        <div className='btn-filters'>
+          <div className="filter-item">
+            <Select
+              defaultValue="Category"
+              style={{ width: 120 }}
+            >
+              {categories?.map((category) => (
+                <Option key={category._id} value={category._id}>{category.category_name}</Option>
+              ))}
+            </Select>
+          </div>
+        </div>
+
+        <div className='btn-action'>
+          <Button className='btn-exprot' style={{ background: 'none' }}>
+            <ExportOutlined /> Export
+          </Button>
+
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={showDrawer}
+            style={{ fontSize: 10 }}
+          >
+            Add Category
+          </Button>
         </div>
       </div>
-      <div className='category-table'>
-      <Table columns={columns} dataSource={categories} />
+
+      <div className='product-container'>
+        <div className='product-table'>
+          <Table
+            columns={columns}
+            dataSource={categories}
+            pagination={{ pageSize: 6 }}
+          />
+        </div>
       </div>
+
+      <Drawer
+        title="Create New Category"
+        width={420}
+        onClose={onClose}
+        open={open}
+        bodyStyle={{ paddingBottom: 80 }}
+      >
+        <Form layout="vertical" form={form} onFinish={onFinish}>
+          <Form.Item
+            label="Mã Danh Mục"
+            name="category_id"
+            rules={[{ required: true, message: 'Hãy nhập mã danh mục!' }]}
+          >
+            <Input placeholder="Nhập mã danh mục" />
+          </Form.Item>
+
+          <Form.Item
+            label="Tên Danh Mục"
+            name="category_name"
+            rules={[{ required: true, message: 'Hãy nhập tên danh mục!' }]}
+          >
+            <Input placeholder="Nhập tên danh mục" />
+          </Form.Item>
+
+          {/* Upload ảnh */}
+          <Form.Item label="Tải ảnh">
+            <Upload
+              customRequest={({ file }) => {
+                handleUpload(file);
+                setFileList([...fileList, file]);
+              }}
+              listType="picture"
+              fileList={fileList}
+            >
+              <Button icon={<UploadOutlined />}>Upload Image</Button>
+            </Upload>
+          </Form.Item>
+
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              Tạo Danh Mục
+            </Button>
+          </Form.Item>
+        </Form>     
+      </Drawer>
     </div>
   );
 }

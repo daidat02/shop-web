@@ -3,6 +3,14 @@ import DB_Connection from '../model/DBConnection.js';
 import mongoose from 'mongoose';
 const ObjectId = mongoose.Types.ObjectId;
 
+function generateID(length = 10) {
+    let otp = '';
+    for (let i = 0; i < length; i++) {
+        otp += Math.floor(Math.random() * 10);
+    }
+    return otp;
+}
+
 
 const createVariant = async (req, res) => {
   const { option_name, options } = req.body; // Lấy dữ liệu từ req.body
@@ -89,7 +97,7 @@ const getTags = async(req,res)=>{
 }
 const createProduct = async (req, res) => {
     const {
-        product_id,product_name, productType, description, brand,
+        product_name, productType, description, brand,
         price, quantity,images,tags,colection,category
     } = req.body;
 
@@ -99,8 +107,9 @@ const createProduct = async (req, res) => {
         //     return res.status(STATUS.BAD_REQUEST).json({ message: 'Vui lòng cung cấp đầy đủ thông tin!' });
         // }
 
+        const productId = generateID()
         const newProduct = new DB_Connection.Product({
-            product_id,
+            product_id:productId,
             product_name,
             productType,
             description,
@@ -109,7 +118,8 @@ const createProduct = async (req, res) => {
             quantity,
             images,
             tags,
-            category
+            category,
+            colection
         });
         
         await newProduct.save();
@@ -128,7 +138,15 @@ const createProduct = async (req, res) => {
 
 const getProduct = async(req,res)=>{
     try {
-        const products = await DB_Connection.Product.find();
+        const products = await DB_Connection.Product.find().populate([
+            { path: 'category' },      
+            { path: 'tags' ,
+                populate:{
+                    path:'tag'
+                }
+            },  
+            { path: 'brand' },  
+        ]);
         res.status(STATUS.OK).json(products);
     } catch (error) {
         res.status(STATUS.SERVER_ERROR).json({ 
@@ -169,22 +187,44 @@ const getProductDetail = async (req,res) =>{
     }
 }
 
-const deleteProduct = async(req,res) =>{
-    const {productId, categoryId} = req.params
+const deleteProduct = async (req, res) => {
+    const { productId } = req.params; // Sử dụng req.params nếu productId được truyền qua URL
     try {
-        const categoryUpdate =  await DB_Connection.Category.findByIdAndUpdate(categoryId,
-            {$pull:{products: new ObjectId(productId)}}
+        const productUpdate = await DB_Connection.Product.findByIdAndUpdate(
+            productId,
+            { state: 'inactive' },
+            { new: true } // Trả về sản phẩm đã cập nhật
         );
-        await DB_Connection.Product.findByIdAndDelete(productId);
-        await categoryUpdate.save();
-        res.status(STATUS.OK).json({message:' Xóa sản phẩm thành công!!!'});
+
+        // Kiểm tra xem sản phẩm có tồn tại hay không
+        if (!productUpdate) {
+            return res.status(STATUS.NOT_FOUND).json({ message: 'Sản phẩm không tồn tại' });
+        }
+
+        res.status(STATUS.OK).json({ message: 'Xóa sản phẩm thành công!!!' });
     } catch (error) {
         res.status(STATUS.SERVER_ERROR).json({ 
             message: error.name,
             error: error.message 
         });
     }
-}
+};
+
+const removeProduct = async (req, res) => {
+    const { productId } = req.params; // Sử dụng req.params nếu productId được truyền qua URL
+    try {
+        const product= await DB_Connection.Product.findByIdAndDelete(
+            productId,
+        );
+
+        res.status(STATUS.OK).json({ message: 'Xóa sản phẩm thành công!!!' });
+    } catch (error) {
+        res.status(STATUS.SERVER_ERROR).json({ 
+            message: error.name,
+            error: error.message 
+        });
+    }
+};
 
 const findProductById = async(req,res,next)=> {
     const {product_id} = req.body
@@ -205,4 +245,4 @@ const findProductById = async(req,res,next)=> {
 
 }
 export{createProduct, getProduct, deleteProduct, findProductById , getProductByCategory, getProductDetail, 
-    createVariant ,getVariants , createTag,getTags}
+    createVariant ,getVariants , createTag,getTags,removeProduct}

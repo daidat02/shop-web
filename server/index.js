@@ -13,6 +13,7 @@ import uploadRoute from './routes/upload.js'
 import productRoute from './routes/product.js'
 import shoppingCartRoute from './routes/shoppingCart.js'
 import orderRoute from './routes/order.js'
+import brandRoute from './routes/brand.js'
 const app = express();
 dotenv.config();
 
@@ -32,6 +33,8 @@ app.use(uploadRoute);
 app.use(productRoute)
 app.use(shoppingCartRoute);
 app.use(orderRoute)
+app.use(brandRoute)
+
 // Khởi động server
 
 

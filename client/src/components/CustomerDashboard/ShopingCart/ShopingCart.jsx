@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
 import { Trash2, ShoppingCart as CartIcon } from 'lucide-react';
+import { Space, Table, Input, Button, Card } from 'antd';
 import QuantityControl from '../ProductDetail/QuantityControl';
 import './cart.css';
 import { useDispatch, useSelector } from 'react-redux';
@@ -10,46 +11,6 @@ import { getCart } from '../../../api/API_Cart';
 const formatPrice = (price) => {
   return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
 };
-
-// Component giỏ hàng
-const CartItem = ({ item, onQuantityChange, onRemove, onCheckItem, checked }) => (
-  item?.product && ( // Kiểm tra item và product trước khi render
-    <div className="cart-item">
-      <div className='checkbox-container'>
-        <input 
-          type='checkbox' 
-          className="check-box" 
-          checked={checked} 
-          onChange={() => onCheckItem(item.product._id)} 
-        />
-      </div>
-      <div className="cart-item-details">
-        <img src={item.product.images[0].url} alt={item.product.product_name} className="cart-item-image" />
-        <div>
-          <h3 className="cart-item-name">{item.product.product_name}</h3>
-          <p className="cart-item-type">{item.product.productType}</p>
-        </div>
-      </div>
-      <div className='title-price'>
-        {formatPrice(item.product.price)}
-      </div>
-      <div className='title-quantity'>
-        <QuantityControl 
-          initialQuantity={item.quantity} // Truyền initialQuantity vào đây
-          onQuantityChange={(newQuantity) => onQuantityChange(item.product._id, newQuantity)}
-        />
-      </div>
-      <div className='title-total-price'>
-        <p className="cart-item-price">{formatPrice(item.priceTotal)}</p>
-      </div>
-      <div className="cart-item-actions">
-        <button onClick={() => onRemove(item.product._id)} className="remove-button">
-          xóa
-        </button>
-      </div>
-    </div>
-  )
-);
 
 // Component giỏ hàng chính
 const ShoppingCart = () => {
@@ -61,7 +22,7 @@ const ShoppingCart = () => {
   const [checkAll, setCheckAll] = useState(false);
   const [shippingAddress, setShippingAddress] = useState("");
 
-  const navigate = useNavigate(); // Khởi tạo useNavigate để điều hướng
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -78,7 +39,7 @@ const ShoppingCart = () => {
   const handleQuantityChange = (productId, newQuantity) => {
     setCartItems(prevItems =>
       prevItems.map(item =>
-        item?.product && item.product._id === productId // Kiểm tra product trước khi truy cập _id
+        item?.product && item.product._id === productId
           ? { ...item, quantity: newQuantity, priceTotal: item.product.price * newQuantity }
           : item
       )
@@ -86,7 +47,7 @@ const ShoppingCart = () => {
   };
 
   const handleRemoveItem = (productId) => {
-    setCartItems(prevItems => prevItems.filter(item => item?.product && item.product._id !== productId)); // Kiểm tra product trước khi truy cập _id
+    setCartItems(prevItems => prevItems.filter(item => item?.product && item.product._id !== productId));
     setCheckedItems(prevChecked => prevChecked.filter(id => id !== productId));
   };
 
@@ -102,7 +63,7 @@ const ShoppingCart = () => {
     if (checkAll) {
       setCheckedItems([]);
     } else {
-      setCheckedItems(cartItems?.map(item => item?.product?._id).filter(Boolean)); // Kiểm tra product trước khi lấy _id
+      setCheckedItems(cartItems?.map(item => item?.product?._id).filter(Boolean));
     }
     setCheckAll(!checkAll);
   };
@@ -115,9 +76,13 @@ const ShoppingCart = () => {
     }
   }, [checkedItems, cartItems]);
 
+  // Tính tổng tiền cho các sản phẩm được chọn
   const totalPrice = cartItems?.filter(item => 
-    item?.product && checkedItems.includes(item.product._id) // Kiểm tra item.product trước khi truy cập _id
-  ).reduce((total, item) => total + (item.priceTotal || 0), 0) || 0; // Đảm bảo total không bị NaN
+    item?.product && checkedItems.includes(item.product._id)
+  ).reduce((total, item) => total + (item.quantity * item.product.price), 0) || 0;
+
+  // Tính số lượng sản phẩm được chọn
+  const totalQuantity = checkedItems.length;
 
   const handleOrderSubmit = async () => {
     if (checkedItems.length === 0) {
@@ -127,10 +92,9 @@ const ShoppingCart = () => {
 
     try {
       const selectedItems = cartItems?.filter(item => 
-        item?.product && checkedItems.includes(item.product._id) // Kiểm tra item.product trước khi truy cập _id
+        item?.product && checkedItems.includes(item.product._id)
       );
 
-      // Điều hướng đến trang đơn hàng và truyền dữ liệu
       navigate('/order', {
         state: {
           items: selectedItems,
@@ -143,6 +107,63 @@ const ShoppingCart = () => {
     }
   };
 
+  const rowSelection = {
+    selectedRowKeys: checkedItems,
+    onChange: (selectedRowKeys) => {
+      setCheckedItems(selectedRowKeys);
+    },
+  };
+
+  const columns = [
+    {
+      dataIndex: ['product', 'images', 0, 'url'],
+      key: 'image',
+      render: (url) => (
+        <div style={{ border: '1px solid #ccc', borderRadius: 5, padding: '2px', display: 'inline-block' }}>
+          <img src={url} alt="Product" style={{ width: '50px', height: '50px' }} />
+        </div>
+      ),
+    },
+    {
+      title: 'Tên sản phẩm',
+      dataIndex: ['product', 'product_name'],
+      key: 'product_name',
+    },
+    {
+      title: 'Giá',
+      dataIndex: ['product', 'price'],
+      key: 'price',
+      render: (price) => formatPrice(price),
+    },
+    {
+      title: 'Số lượng',
+      dataIndex: 'quantity',
+      key: 'quantity',
+      render: (quantity, record) => (
+        <QuantityControl 
+          initialQuantity={quantity}
+          onQuantityChange={(newQuantity) => handleQuantityChange(record.product._id, newQuantity)}
+        />
+      ),
+    },
+    {
+      title: 'Tổng tiền',
+      key: 'totalPrice',
+      render: (_, record) => formatPrice(record.quantity * record.product.price),
+    },
+    {
+      title: 'Hành động',
+      key: 'action',
+      render: (_, record) => (
+        <Button 
+          type="link" 
+          icon={<Trash2 />} 
+          onClick={() => handleRemoveItem(record.product._id)}
+        />
+      ),
+    },
+  ];
+
   return (
     <div className="cart-container">
       <div className="cart-header">
@@ -152,49 +173,43 @@ const ShoppingCart = () => {
         </h2>
       </div>
 
-      <div className="cart-item-container">
-        <div className="cart-item-title">
-          <div className='checkbox-container'>
-            <input 
-              type='checkbox' 
-              className="check-box" 
-              checked={checkAll}
-              onChange={handleCheckAll}
-            />
+      <div className='cart-content'>
+        <Card className='cart-table'>
+          <Table
+            rowSelection={{
+              type: 'checkbox',
+              ...rowSelection,
+            }}
+            columns={columns}
+            dataSource={cartItems}
+            pagination={false} // Loại bỏ phân trang
+            rowKey={record => record.product._id} // Thêm rowKey để đảm bảo mỗi hàng có một key duy nhất
+          />
+        </Card>
+        <div className='cart-bill'>
+          <h3>Thông tin thanh toán</h3>
+          <div className='billing-details'>
+            <div className='billing-item'>
+              <span className='billing-label'>Giá tiền:</span>
+              <span className='billing-value'>{formatPrice(totalPrice)}</span>
+            </div>
+            <div className='billing-item'>
+              <span className='billing-label'>Giảm giá:</span>
+              <span className='billing-value'>{formatPrice(0)} {/* Thay đổi theo logic giảm giá */}</span>
+            </div>
+            <div className='billing-item'>
+              <span className='billing-label'>Số lượng:</span>
+              <span className='billing-value'>{totalQuantity}</span>
+            </div>
+            <div className='billing-item'>
+              <span className='billing-label'>Tổng cộng:</span>
+              <span className='billing-value'>{formatPrice(totalPrice)}</span>
+            </div>
           </div>
-          <div className='title-product'>Sản phẩm</div> 
-          <div className='title-price'>Đơn Giá</div> 
-          <div className='title-quantity'>Số Lượng</div> 
-          <div className='title-total-price'>Số Tiền</div> 
-          <div className='title-actions'>Thao tác</div>
+          <Button type="primary" onClick={handleOrderSubmit} className="order-button">
+            Đặt hàng
+          </Button>
         </div>
-
-        <div className="cart-item-content">
-          {cartItems?.length === 0 ? (
-            <p className="empty-cart-message">Giỏ hàng của bạn đang trống</p>
-          ) : (
-            cartItems?.map(item => (
-              item?.product && ( // Kiểm tra item và product trước khi render
-                <CartItem
-                  key={item.product._id} // Đảm bảo rằng _id tồn tại
-                  item={item}
-                  onQuantityChange={handleQuantityChange}
-                  onRemove={handleRemoveItem}
-                  onCheckItem={handleCheckItem}
-                  checked={checkedItems.includes(item.product._id)}
-                />
-              )
-            ))
-          )}
-        </div>
-      </div>
-      <div className="pay-container">
-        <h3>Tổng cộng</h3>
-        <p className="total-price">{formatPrice(totalPrice)}</p>
-        
-        <button onClick={handleOrderSubmit} className="order-button">
-          Đặt hàng
-        </button>
       </div>
     </div>
   );

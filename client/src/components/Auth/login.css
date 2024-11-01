@@ -1,7 +1,8 @@
 .login-page {
   display: flex;
   justify-content: space-evenly;
-  margin: 20px 10%;
+  padding: 20px 10%;
+  background: #fff;
 }
 
 .login-page .login-img{

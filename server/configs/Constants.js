@@ -13,7 +13,8 @@ const API_PATH = {
     GET_PROD:"/prod/get",
     GET_PROD_CAT_ID:"/prod/:categoryId",
     CREATE_PROD:"/prod/create",
-    DELETE_PROD:"/prod/:categoryId/:productId",
+    DELETE_PRODUCT:"/prod/:productId",
+    REMOVE_PRODUCT:"/remove/:productId",
     GET_PROD_DETAIL:"/prod-detail/:productId",
     CREATE_VARIANT:"/variant/create",
     GET_VARIANT: "/variant/",
@@ -32,6 +33,9 @@ const API_PATH = {
     //uplaod
     UPLOAD_IMAGE:"/upload/images",
 
+    //brand
+    GET_BRAND:"/brand/",
+    CREATE_BRAND:"/brand/create"
 };
 
 const STATUS = {

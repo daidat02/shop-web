@@ -2,7 +2,7 @@ import axios from 'axios';
 import { addProdToCartSuccess, createProductSuccess, deleteProductSuccess, getproductDetailSuccess, getProductsSuccess } from '../redux/slice/product';
 import { getProductByCategorySuccess } from '../redux/slice/category';
 
-export const createProduct = async(dispacth, categoryId, data)=>{
+export const createProduct = async(dispacth, data)=>{
     try {
         await axios.post(`/prod/create`,data)
         dispacth(createProductSuccess());
@@ -13,10 +13,10 @@ export const createProduct = async(dispacth, categoryId, data)=>{
     }
 }
 
-export const getProducts =async(dispacth)=>{
+export const getProducts =async()=>{
     try {
         const res = await axios.get(`/prod/get`, )
-        dispacth(getProductsSuccess(res.data));
+        return res.data
     } catch (error) {
         console.log(error);
     }
@@ -31,9 +31,20 @@ export const getProductByCategory = async(dispacth, categoryId) =>{
     }
 }
 
-export const deleteProduct = async(dispacth,categoryId,productId) =>{
+export const deleteProduct = async(dispacth,productId) =>{
     try {
-        const res = await axios.delete(`/prod/${categoryId}/${productId}`)
+        const res = await axios.post(`/prod/${productId}`)
+        dispacth(deleteProductSuccess(res.data));
+        return {success:true}
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+
+export const removeProduct = async(dispacth,productId) =>{
+    try {
+        const res = await axios.delete(`/remove/${productId}`)
         dispacth(deleteProductSuccess(res.data));
         return {success:true}
     } catch (error) {

@@ -42,7 +42,7 @@ const AdminHome = () => {
         background: colorBgContainer, 
         height: 70 
       }} />
-
+    
       <Layout>
         
           <AdminSider onCreateCategoryClick={() => showDrawer(<CreateCategoryForm />)} />
@@ -57,7 +57,7 @@ const AdminHome = () => {
               <Routes>
                 <Route path="home" element={<div>Trang chủ Admin</div>} />
                 <Route path="category" element={<AdminCategory />} />
-                <Route path="products/:categoryId" element={<AdminProduct />} />
+                <Route path="products" element={<AdminProduct />} />
                 <Route path="/create-product/:categoryId" element={<CreateProduct />} />
               </Routes>
             </Content>

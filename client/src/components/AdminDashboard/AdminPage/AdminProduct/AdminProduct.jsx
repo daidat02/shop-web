@@ -1,55 +1,97 @@
 import React, { useEffect, useState } from 'react';
-import { Space, Table, Tag, Switch, Input, Button, Select, Breadcrumb } from 'antd';
-import { DeleteOutlined, PlusOutlined, SearchOutlined, ExportOutlined } from '@ant-design/icons';
+import { Space, Table, Tag, Select, Input, Button, Breadcrumb, Dropdown, Menu } from 'antd';
+import { DeleteOutlined, PlusOutlined, SearchOutlined, ExportOutlined, EllipsisOutlined, EyeOutlined } from '@ant-design/icons';
 import './product.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteProduct, getProductByCategory } from '../../../../api/API_Product';
+import { deleteProduct, getProductByCategory, getProducts, getTags, removeProduct } from '../../../../api/API_Product';
 import { useNavigate, useParams } from 'react-router-dom';
 import NotificationMessage from '../../../Message/NotificationMessage';
+import { getCategories } from '../../../../api/API_Category';
 
 const { Option } = Select;
-const { Search } = Input;
 
 const AdminProduct = () => {
-  const initialProducts = useSelector((state) => state.categories.products);
   const msg = useSelector((state) => state.products.msg);
   const dispatch = useDispatch();
-  const { categoryId } = useParams(); // Lấy categoryId từ params
-  const [products, setProducts] = useState(initialProducts);
-  const navigate = useNavigate(); // Sử dụng useNavigate để điều hướng
+  const { categoryId } = useParams();
+  const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [tags, setTags] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedTag, setSelectedTag] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    getProductByCategory(dispatch, categoryId);
-  }, [dispatch, categoryId]);
+    fetchApi();
+  }, []);
+
+  const fetchApi = async () => {
+    try {
+      const productData = await getProducts();
+      setProducts(productData);
+      const categoriesData = await getCategories();
+      setCategories(categoriesData);
+      const tagData = await getTags();
+      setTags(tagData.data);
+    } catch (error) {
+      console.log("Không thể tải danh mục");
+    }
+  };
 
   useEffect(() => {
-    setProducts(initialProducts);
-  }, [initialProducts]);
+    let newFilteredProducts = products;
+    if (selectedCategory) {
+      newFilteredProducts = newFilteredProducts.filter(
+        (product) => product.category?._id === selectedCategory
+      );
+    }
+    if (selectedTag) {
+      newFilteredProducts = newFilteredProducts.filter((product) =>
+        product.tags?.some((tag) => tag.tag._id === selectedTag)
+      );
+    }
+    setFilteredProducts(newFilteredProducts);
+  }, [selectedCategory, selectedTag, products]);
 
   const handleDelete = async (id) => {
     try {
-      const res = await deleteProduct(dispatch, initialProducts._id, id);
+      const res = await deleteProduct(dispatch, id);
       if (res.success === true) {
-        NotificationMessage.success(msg.message); // Thông báo thành công
+        NotificationMessage.success(msg.message);
+        fetchApi();
       }
-      getProductByCategory(dispatch, categoryId);
     } catch (error) {
       NotificationMessage.error(error.response?.data || 'Có lỗi xảy ra');
     }
   };
 
-  // Điều hướng đến trang tạo sản phẩm
-  const handleCreateProduct = () => {
-    navigate(`/admin/create-product/${categoryId}`); // Chuyển hướng sang trang tạo sản phẩm với categoryId
+  const handleRemove = async (id) => {
+    try {
+      const res = await removeProduct(dispatch, id);
+      if (res.success === true) {
+        NotificationMessage.success(msg.message);
+        fetchApi();
+      }
+    } catch (error) {
+      NotificationMessage.error(error.response?.data || 'Có lỗi xảy ra');
+    }
   };
 
-  // Hàm xử lý khi nhấn vào Card
+  const handleCreateProduct = () => {
+    navigate(`/admin/create-product/${categoryId}`);
+  };
+
   const handleClick = (categoryId) => {
     navigate(`/admin/products/${categoryId}`);
   };
 
-  const handleChange = (value) => {
-    console.log(`selected ${value}`);
+  const handleCategoryChange = (value) => {
+    setSelectedCategory(value);
+  };
+
+  const handleTagChange = (value) => {
+    setSelectedTag(value);
   };
 
   const columns = [
@@ -76,32 +118,32 @@ const AdminProduct = () => {
       render: (product_name) => (
         <a>{product_name}</a>
       ),
-      sorter: (a, b) => a.product_name.localeCompare(b.product_name), // Thêm sorter
+      sorter: (a, b) => a.product_name.localeCompare(b.product_name),
     },
     {
       title: 'Price',
       dataIndex: 'price',
       key: 'price',
       width: '100px',
-      sorter: (a, b) => a.price - b.price, // Thêm sorter
+      sorter: (a, b) => a.price - b.price,
     },
     {
       title: 'Category',
-      dataIndex: 'productType',
-      key: 'productType',
+      dataIndex: ['category', 'category_name'],
+      key: 'category_name',
       width: '200px',
-      sorter: (a, b) => a.productType.localeCompare(b.productType), // Thêm sorter
+      sorter: (a, b) => a.productType.localeCompare(b.productType),
     },
     {
       title: 'Tags',
       dataIndex: 'tags',
       key: 'tags',
       width: '300px',
-      render: () => (
+      render: (tags) => (
         <span className="tag-container">
-          <Tag color="green">New</Tag>
-          <Tag color="blue">Popular</Tag>
-          <Tag color="orange">Discount</Tag>
+          {tags.map((tag) => (
+            <Tag key={tag.tag._id} color="blue">{tag.tag.tag}</Tag> 
+          ))}
         </span>
       ),
     },
@@ -110,32 +152,54 @@ const AdminProduct = () => {
       dataIndex: 'quantity',
       key: 'quantity',
       width: '10%',
-      sorter: (a, b) => a.quantity - b.quantity, // Thêm sorter
+      sorter: (a, b) => a.quantity - b.quantity,
     },
     {
       title: 'State',
-      dataIndex: 'tags',
-      key: 'tags',
+      dataIndex: 'state',
+      key: 'state',
       width: '200px',
-      render: () => (
-        <span className="tag-container">
-          <Tag color="green">Active</Tag>
-        </span>
+      render: (state) => (
+        <Tag color={state === 'active' ? 'green' : 'red'}>
+          {state === 'active' ? 'ACTIVE' : 'INACTIVE'}
+        </Tag>
       ),
     },
     {
       title: 'Action',
       key: 'action',
-      render: (_, record) => (
-        <Space size="middle">
-          <a onClick={() => handleClick(record.category_id)}>Chi tiết </a>
-          <DeleteOutlined
-            style={{ color: 'red', cursor: 'pointer', fontSize: '16px' }}
-            onClick={() => handleDelete(record._id)}
-          />
-        </Space>
-      ),
-      width: '200px',
+      render: (_, record) => {
+        const menu = (
+          <Menu>
+            <Menu.Item
+              key="1"
+              onClick={() => handleClick(record.category_id)}
+            >
+              Chi tiết
+            </Menu.Item>
+            <Menu.Item
+              key="1"
+              onClick={() => handleDelete(record._id)}
+
+            >
+              Ngừng bán
+            </Menu.Item>
+            <Menu.Item
+              key="2"
+              icon={<DeleteOutlined style={{ color: 'red' }} />}
+              onClick={() => handleRemove(record._id)}
+            >
+              Xóa
+            </Menu.Item>
+          </Menu>
+        );
+        return (
+          <Dropdown overlay={menu} trigger={['click']}>
+            <EllipsisOutlined style={{ fontSize: '20px', cursor: 'pointer' }} />
+          </Dropdown>
+        );
+      },
+      width: '100px',
       align: 'center',
     },
   ];
@@ -147,16 +211,16 @@ const AdminProduct = () => {
         <Breadcrumb.Item>Products</Breadcrumb.Item>
       </Breadcrumb>
 
-    <div className='title-container'>
-     <h1 className='content-title'>Products</h1>
-    </div>
+      <div className='title-container'>
+        <h1 className='content-title'>Products</h1>
+      </div>
 
       <div className='list-state-product'>
         <ul>
           <li><a>All</a> (78120)</li>
           <li><a>Published</a>(78120)</li>
-          <li><a href="">Drafts</a>(18)</li>
-          <li><a href="">On discount</a>(795)</li>
+          <li><a>Drafts</a>(18)</li>
+          <li><a>On discount</a>(795)</li>
         </ul>
       </div>
 
@@ -166,53 +230,32 @@ const AdminProduct = () => {
             prefix={<SearchOutlined style={{ color: '#8a94ad' }} />}
             placeholder="Search Products"
             size="middle"
-            style={{
-              width: 300,
-              padding: '6px 10px',
-            }}
+            style={{ width: 300, padding: '6px 10px' }}
           />
         </div>
 
         <div className='btn-filters'>
-          <div className="filter-item">
-            <Select
-              defaultValue="Category"
-              style={{ width: 120 }}
-              onChange={handleChange}
-            >
-              <Option value="1">Option 1</Option>
-              <Option value="2">Option 2</Option>
-              <Option value="3">Option 3</Option>
-            </Select>
-          </div>
+          <Select defaultValue="Category" style={{ width: 120 }} onChange={handleCategoryChange}>
+            {categories.map((category) => (
+              <Option key={category._id} value={category._id}>{category.category_name}</Option>
+            ))}
+          </Select>
 
-          <div className="filter-item middle-item">
-            <Select
-              defaultValue="Vendor"
-              style={{ width: 120 }}
-              onChange={handleChange}
-            >
-              <Option value="1">Option 1</Option>
-              <Option value="2">Option 2</Option>
-              <Option value="3">Option 3</Option>
-            </Select>
-          </div>
+          <Select defaultValue="Tags" style={{ width: 120 }} onChange={handleTagChange}>
+            {tags.map((tag) => (
+              <Option key={tag._id} value={tag._id}>{tag.tag}</Option>
+            ))}
+          </Select>
 
-          <div className="filter-item">
-            <Select
-              defaultValue="More filters"
-              style={{ width: 120 }}
-              onChange={handleChange}
-            >
-              <Option value="1">Option 1</Option>
-              <Option value="2">Option 2</Option>
-              <Option value="3">Option 3</Option>
-            </Select>
-          </div>
+          <Select defaultValue="More filters" style={{ width: 120 }} onChange={() => {}}>
+            <Option value="1">Option 1</Option>
+            <Option value="2">Option 2</Option>
+            <Option value="3">Option 3</Option>
+          </Select>
         </div>
 
         <div className='btn-action'>
-          <Button className='btn-exprot' style={{ background: 'none' }}>
+          <Button className='btn-export' style={{ background: 'none' }}>
             <ExportOutlined /> Export
           </Button>
 
@@ -228,13 +271,11 @@ const AdminProduct = () => {
       </div>
 
       <div className='product-container'>
-        <div className='product-table'>
-          <Table
-            columns={columns}
-            dataSource={products?.products}
-            pagination={{ pageSize: 6 }} // Giới hạn số item hiển thị mỗi trang là 6
-          />
-        </div>
+        <Table
+          columns={columns}
+          dataSource={filteredProducts}
+          pagination={{ pageSize: 6 }}
+        />
       </div>
     </div>
   );
