@@ -14,6 +14,10 @@ import productRoute from './routes/product.js'
 import shoppingCartRoute from './routes/shoppingCart.js'
 import orderRoute from './routes/order.js'
 import brandRoute from './routes/brand.js'
+import userRoute from   './routes/user.js'
+import voucherRoute from './routes/voucher.js'
+import paymentRoute from './routes/payment.js'
+import sendEmailRoute from './routes/sendEmail.js'
 const app = express();
 dotenv.config();
 
@@ -34,10 +38,12 @@ app.use(productRoute)
 app.use(shoppingCartRoute);
 app.use(orderRoute)
 app.use(brandRoute)
+app.use(userRoute)
+app.use(voucherRoute)
+app.use(paymentRoute)
+app.use(sendEmailRoute)
 
 // Khởi động server
-
-
 app.listen(3000, () => {
     console.log('Server is running on port 3000');
 });

@@ -21,7 +21,7 @@ const AdminProduct = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedTag, setSelectedTag] = useState(null);
   const navigate = useNavigate();
-
+  
   useEffect(() => {
     fetchApi();
   }, []);
@@ -148,11 +148,12 @@ const AdminProduct = () => {
       ),
     },
     {
-      title: 'Kho',
+      title: 'Warehouse',
       dataIndex: 'quantity',
       key: 'quantity',
       width: '10%',
       sorter: (a, b) => a.quantity - b.quantity,
+      align:'center'
     },
     {
       title: 'State',
@@ -164,9 +165,9 @@ const AdminProduct = () => {
           {state === 'active' ? 'ACTIVE' : 'INACTIVE'}
         </Tag>
       ),
+      align:'center'
     },
     {
-      title: 'Action',
       key: 'action',
       render: (_, record) => {
         const menu = (
@@ -199,7 +200,7 @@ const AdminProduct = () => {
           </Dropdown>
         );
       },
-      width: '100px',
+      width: '70px',
       align: 'center',
     },
   ];

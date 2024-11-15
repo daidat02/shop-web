@@ -95,10 +95,13 @@ const getTags = async(req,res)=>{
           });
     }
 }
+
+
+
 const createProduct = async (req, res) => {
     const {
         product_name, productType, description, brand,
-        price, quantity,images,tags,colection,category
+        price, quantity,images,tags,colection,category,discountPercentage
     } = req.body;
 
     try {
@@ -108,6 +111,11 @@ const createProduct = async (req, res) => {
         // }
 
         const productId = generateID()
+
+        let sale_price = 0;
+        if(discountPercentage){
+            sale_price = price - (price * discountPercentage)/100
+        }
         const newProduct = new DB_Connection.Product({
             product_id:productId,
             product_name,
@@ -119,7 +127,9 @@ const createProduct = async (req, res) => {
             images,
             tags,
             category,
-            colection
+            colection,
+            discountPercentage,
+            sale_price:sale_price
         });
         
         await newProduct.save();
@@ -174,7 +184,12 @@ const getProductByCategory = async(req,res) =>{
 const getProductDetail = async (req,res) =>{
     const {productId} = req.params;
     try {
-        const product = await DB_Connection.Product.findOne({product_id:productId});
+        const product = await DB_Connection.Product.findOne({product_id:productId}).populate({
+            path:'tags',
+            populate:{
+                path:'tag'
+            }
+        });
         if (!product) {
             return res.status(STATUS.NOT_FOUND).json({ message: "Product not found" });
         }
@@ -209,6 +224,42 @@ const deleteProduct = async (req, res) => {
         });
     }
 };
+
+const updateProductToOrderSuccess = async (req, res) => {
+    try {
+        const { orderId } = req.params; // Giả sử bạn truyền mảng các sản phẩm trong đơn hàng qua body
+        const order = await DB_Connection.Order.findOne({order_id:orderId})
+        .populate(
+            {
+                path:'items',
+                populate:{
+                path:'product'
+            }
+        }
+        );;
+        if(!order){
+            res.status(STATUS.BAD_REQUEST).json('không tìm thấy đơn hàng');
+        }
+        const orderItems = order.items
+        for (const item of orderItems) {
+            const product = await DB_Connection.Product.findById(item.product)
+            if (product) {
+                // Cập nhật số lượng tồn kho
+                product.quantity -= item.quantity;
+                // Tăng lượt bán
+                product.dealScore = (product.dealScore || 0) + item.quantity;
+                // Lưu lại sản phẩm đã được cập nhật
+                await product.save();
+            }
+            console.log(product.quantity);
+        }
+        res.status(200).json({ message: "Cập nhật trạng thái sản phẩm thành công!", });
+    } catch (error) {
+        console.error("Error updating product status:", error);
+        res.status(500).json({ message: "Có lỗi xảy ra khi cập nhật trạng thái sản phẩm.", error: error.message });
+    }
+};
+
 
 const removeProduct = async (req, res) => {
     const { productId } = req.params; // Sử dụng req.params nếu productId được truyền qua URL
@@ -245,4 +296,4 @@ const findProductById = async(req,res,next)=> {
 
 }
 export{createProduct, getProduct, deleteProduct, findProductById , getProductByCategory, getProductDetail, 
-    createVariant ,getVariants , createTag,getTags,removeProduct}
+    createVariant ,getVariants , createTag,getTags,removeProduct ,updateProductToOrderSuccess}

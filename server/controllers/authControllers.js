@@ -21,23 +21,94 @@ const sendOTP = async (req, res) => {
     const otp = generateOTP();
     
     try {
-        const emailExist = await DB_Connection.Account.findOne({email:email});
-        if(emailExist){
-            return res.status(STATUS.NOT_FOUND).json({message:'Email đã được đăng ký trong hệ thống trong hệ thống!!!'})
-        }
+        // const emailExist = await DB_Connection.Account.findOne({email:email});
+        // if(emailExist){
+        //     return res.status(STATUS.NOT_FOUND).json({
+        //         success:false,
+        //         message:'Email đã được đăng ký trong hệ thống trong hệ thống!!!'
+        //     })
+        // }
         const mailOptions = {
             from: "daidat1202@gmail.com",
             to: email,
             subject: 'Mã xác thực OTP',
-            text: `Mã OTP của bạn là: ${otp}`,
+            html: `
+                <html>
+                    <head>
+                        <style>
+                            body {
+                                font-family: Arial, sans-serif;
+                                background-color: #f4f4f4;
+                                margin: 0;
+                                padding: 0;
+                                color: #333;
+                            }
+                            .email-container {
+                                max-width: 600px;
+                                margin: 20px auto;
+                                background-color: #ffffff;
+                                border-radius: 8px;
+                                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                                padding: 20px;
+                            }
+                            .email-header {
+                                text-align: center;
+                                padding: 10px 0;
+                                border-bottom: 1px solid #ddd;
+                            }
+                            .email-header h2 {
+                                color: #000;
+                                margin: 0;
+                            }
+                            .email-body {
+                                padding: 20px 0;
+                                text-align: center;
+                            }
+                            .otp-code {
+                                font-size: 24px;
+                                font-weight: bold;
+                                color: #000;
+                                margin: 20px 0;
+                                padding: 10px;
+                                border-radius: 5px;
+                                background-color: #f4f9f4;
+                                display: inline-block;
+                            }
+                            .email-footer {
+                                text-align: center;
+                                font-size: 12px;
+                                color: #777;
+                                margin-top: 30px;
+                                padding-top: 10px;
+                                border-top: 1px solid #ddd;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="email-container">
+                            <div class="email-header">
+                                <h2>Mã xác thực OTP của bạn</h2>
+                            </div>
+                            <div class="email-body">
+                                <p>Chào bạn,</p>
+                                <p>Đây là mã OTP để xác thực email của bạn:</p>
+                                <div class="otp-code">${otp}</div>
+                                <p>Mã OTP này có hiệu lực trong 10 phút. Vui lòng không chia sẻ mã này với bất kỳ ai.</p>
+                            </div>
+                            <div class="email-footer">
+                                <p>Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi.</p>
+                            </div>
+                        </div>
+                    </body>
+                </html>
+            `
         };
+
 
         const newOTP = new DB_Connection.OTP({
             email,
             otp
         })
-
-        
         await newOTP.save();
         await transporter.sendMail(mailOptions);
 
@@ -68,10 +139,8 @@ const checkOTP = async(req,res,next)=>{
 
 const registerAccount = async (req, res) => {
     const{user_name, role, phonenumber, email,password} = req.body
-    const id= createRandomID();
+    const id= generateID(8);
     try {
-       
-
         const salt = await bcrypt.genSalt(10);
         const hashed = await bcrypt.hash(password,salt)
         const newUser = new DB_Connection.User({
@@ -79,6 +148,7 @@ const registerAccount = async (req, res) => {
             role,
             id:id,
             phonenumber,
+            email:email
         });
         await newUser.save();
         const newAccount = new DB_Connection.Account({
@@ -140,6 +210,9 @@ const loginUser = async (req,res)=>{
 
     }
 }
+
+
+
 
 // Xuất hàm registerAccount
 export { registerAccount , generateAccessToken , generateRefressToken, loginUser ,sendOTP , checkOTP};

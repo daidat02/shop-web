@@ -1,0 +1,393 @@
+/* Main Container */
+.checkout-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+  }
+  
+  /* Header Styles */
+  .checkout-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  
+  .checkout-header h1 {
+    font-size: 32px;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  .checkout-header p {
+    color: #666;
+    font-size: 16px;
+  }
+  
+  /* Content Layout */
+  .checkout-content {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 20px;
+  }
+  .chekout-content-success{
+    display: flex;
+    justify-content: center;
+  }
+  .checkout-success{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .checkout-success .anticon-check-circle{
+    justify-content: center !important;
+  }
+  /* Card Styles */
+  .card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+  
+  .card-header {
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .card-header h2 {
+    font-size: 18px;
+    color: #333;
+    margin: 0;
+  }
+  
+  .card-body {
+    padding: 20px;
+  }
+  .info-user .card-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .address-action .ant-tag ,
+  .voucher-action .ant-tag{
+    display: inline-block;
+    cursor: pointer; /* Con trỏ chuột */
+  }
+ 
+  .info-recipient{
+    display: flex;
+    gap: 20px;
+  }
+  .info-recipient p{
+    font-weight: bold;
+  }
+  .info-recipient p ,
+  .address-recipient p {
+    font-size: 13px;
+    color: #898989;
+}
+  /* Order Items */
+  .order-details {
+    height: fit-content;
+    padding-bottom: 30px;
+  }
+  .order-item {
+    display: flex;
+    justify-content: space-around;
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .order-item:last-child {
+    border-bottom: none;
+  }
+  .item-img{
+    padding: 5px;
+    border: solid 0.5px #b8b8b8;
+    border-radius: 5px;
+  }
+  .item-img img{
+    width: 50px;
+    height: 50px;
+  }
+  .item-info{
+    width: 60%;
+  }
+  .item-info h3 {
+    font-size: 16px;
+    color: #333;
+    margin: 0 0 5px 0;
+  }
+  
+  .item-info p {
+    color: #666;
+    font-size: 14px;
+    margin: 0;
+  }
+  
+  .item-price {
+    text-align: right;
+  }
+  
+  .item-price .total {
+    font-weight: bold;
+    color: #333;
+    margin: 0 0 5px 0;
+  }
+  
+  .item-price .unit-price {
+    color: #666;
+    font-size: 14px;
+    margin: 0;
+  }
+  
+  /* Price Summary */
+  .price-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    color: #666;
+  }
+ .note{
+    justify-content: flex-start;
+    align-items: center;
+    gap: 20px
+  }
+  .note .note-input{
+    width: 70%;
+  }
+  
+  .price-row.total {
+    font-weight: bold;
+    color: #333;
+    font-size: 18px;
+  }
+  .payment-method{
+    display: flex;
+    flex-direction: column;
+  }
+  .payment-method .list-method{
+    margin-top: 15px;
+  }
+  .divider {
+    height: 1px;
+    background-color: #eee;
+    margin: 15px 0;
+  }
+  
+  /* Button */
+  .checkout-button {
+    width: 100%;
+    padding: 15px;
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .checkout-button:hover {
+    background-color: #357abd;
+  }
+  
+  /* Empty Cart */
+  .empty-cart {
+    text-align: center;
+    padding: 40px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 40px auto;
+    max-width: 400px;
+  }
+  
+  .empty-cart p {
+    color: #666;
+    font-size: 16px;
+    margin: 0;
+  }
+
+  .address-header{
+    border-bottom: 1px solid #eee;
+    margin-bottom: 20px;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .checkout-content {
+      grid-template-columns: 1fr;
+    }
+  
+    .checkout-container {
+      padding: 10px;
+    }
+  
+    .card {
+      margin-bottom: 15px;
+    }
+  
+    .checkout-header h1 {
+      font-size: 24px;
+    }
+  
+    .card-header h2 {
+      font-size: 18px;
+    }
+  }
+  
+  /* Animation */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .checkout-container {
+    animation: fadeIn 0.5s ease-out;
+  }
+  .checkout-otp-container{
+    height: 100vh;
+    max-height: 590px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  /* Hover Effects */
+  .order-item:hover {
+    background-color: #f9f9f9;
+  }
+  
+  .card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+/* css modal voucher */
+.custom-modal .ant-modal-content{
+    padding: 0 !important;
+}
+
+.voucher-header{
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+}
+  
+.voucher-header h2 {
+    font-size: 18px;
+    color: #333;
+    margin: 0;
+}
+
+.voucher-content{
+    padding: 20px;
+}
+
+.voucher-filter{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    background: #f9f9f9;
+    padding: 20px 30px;
+    justify-content: center;
+}
+
+.voucher-filter input{
+    width: 55%;
+    padding: 7px;
+    border-radius: 1;
+    background: none;
+}
+
+.voucher-filter button{
+    padding:18px 10px;
+    border-radius: 1;
+}
+
+
+.list-item {
+    max-height: 300px; /* Chiều cao cố định */
+    overflow-y: auto; /* Cho phép cuộn dọc */
+    padding: 10px;
+}
+.voucher-item{
+    width: 400px;
+}
+.voucher-action{
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+
+/* order detail */
+
+.email-container{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+}
+.email-body{
+  max-width: 450px;
+  background-color: #fff;
+  padding: 20px;
+  border: solid 0.5px #909090;
+  border-radius: 6px;
+}
+.email-title{
+  padding: 25px 0;
+}
+.email-title .user-name{
+  margin-bottom: 20px;
+  font-size: 12px;
+  color: #333;
+}
+.email-body .thanks-detail p{
+  font-size: 12px;
+  color: #333;
+  margin-bottom: 5px;
+}
+.email-body .card-content{
+  border: solid 0.5px #909090;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+
+
+.list-items{
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  align-items: center;
+}
+
+.order-info .list-items span,
+.infor-row,.email-footer{
+  font-size: 12px;
+  color: #333;
+}
+.order-info .order-price-container{
+  padding: 15px 10px 0 10px;
+  border-top:solid 0.5px #ccc ;
+  display: flex;
+  flex-direction: column;
+}
+.infor-row{
+  display: flex;
+  justify-content: space-between;
+  padding-bottom:10px;
+}
+.order-user-info{
+  display: flex;
+  flex-direction: column;
+}

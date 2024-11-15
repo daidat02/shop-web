@@ -10,6 +10,8 @@ import ProductDetail from "./ProductDetail/ProductDetail";
 import Register from "../Auth/register";
 import ShoppingCart from "./ShopingCart/ShopingCart";
 import OrderPage from "./Order/Order";
+import CheckOutStatus from "./Order/CheckOutStatus";
+import ScrollToTop from "./ActionComponents/ScrollTop";
 const CustomerPage = ()=>{
     return(
         <div className="main">
@@ -17,13 +19,16 @@ const CustomerPage = ()=>{
                 <Header/>
             </div>
             <div className="body">
+                <ScrollToTop/>
             <Routes>
-                <Route path='/product' element={<Product/>} />
+                <Route path='/' element={<HomePage/>} />
+                <Route path='/products' element={<Product/>} />
                 <Route path='/product-detail/:productId' element={<ProductDetail/>} />
                 <Route path='/login' element = {<Login/>}/>
                 <Route path='/register' element = {<Register/>}/>
                 <Route path='/cart' element = {<ShoppingCart/>}/>
                 <Route path='/order' element = {<OrderPage/>}/>
+                <Route path='/checkout-status' element = {<CheckOutStatus/>}/>   
                 {/* <HomePage/> */}
             </Routes>
             </div>

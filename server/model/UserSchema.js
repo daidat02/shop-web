@@ -1,11 +1,16 @@
 // model/UserSchema.js
 import mongoose, { Schema } from 'mongoose';
 import { DB_SCHEMA } from '../configs/Constants.js';
-
+const ObjectId = mongoose.Types.ObjectId
 const UserSchema = new Schema({
     user_name: {
         type: String,
         required: true,
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true
     },
     role: {
         type: String,
@@ -26,6 +31,30 @@ const UserSchema = new Schema({
         required: false,
         default: "chưa có số điện thoại"
     },
+    address:{
+        type:ObjectId,
+        ref:DB_SCHEMA.ADDRESS,
+        required:false,
+    },
+    order_quantity:{
+        type:Number,
+        required:false,
+        default: 0
+    },
+    total_spent:{
+        type:Number,
+        required:false,
+        default: 0
+    },
+    last_order:{
+        type: Date,
+        required:false
+    },
+    isAccount:{
+        type: Boolean,
+        required:true,
+        default:true
+    }
 });
 
 // Xuất mô hình User

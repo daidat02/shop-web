@@ -28,6 +28,10 @@ const ProductSchema = new Schema({
         type:Number,
         required:true
     },
+    sale_price:{
+        type:Number,
+        required:false
+    },
     quantity:{
         type:Number,
         required:true
@@ -63,9 +67,13 @@ const ProductSchema = new Schema({
             values:['active', 'inactive']
         },
         default:'active'
-    }
-    
-    
+    },
+    isTopDeal :{type:Boolean, default:false},
+    isBestOffer :{type:Boolean, default:false},
+    discountPercentage:{type:Number, required:false},
+    dealScore:{type:Number, required:false },
+    dealExpiryDate:{type:Date, required:false },
+    offerExpiryDate:{type:Date, required:false}
 },{ timestamps: true });
 
 const Product = mongoose.model(DB_SCHEMA.PRODUCT, ProductSchema);

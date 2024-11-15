@@ -3,6 +3,11 @@ import { DB_SCHEMA } from '../configs/Constants.js';
 const ObjectId = mongoose.Types.ObjectId;
 
 const OrderSchema = new Schema({
+    order_id:{
+        type: String,
+        required: true,
+        unique: true
+    },
     user: { type: ObjectId, ref: DB_SCHEMA.USER, required: true }, 
     items: [
         {
@@ -12,8 +17,14 @@ const OrderSchema = new Schema({
         }
     ],
     totalBill: { type: Number, required: false }, // Tổng số tiền của đơn hàng
-    status: { type: String, enum:{values:['pendding' , 'shipped', 'delevered']}, default: 'pendding' }, // Trạng thái đơn hàng (pending, shipped, delivered)
-    shippingAddress: { type: String, required: false }, // Địa chỉ giao hàng
+    discountAmount: { type: Number, required: false }, // Số tiền dudocj giảm sau khi áp voucher
+    finalAmount: { type: Number, required: false }, // Tổng số tiền của đơn hàng sau khi giảm giá
+    shippingCost: { type: Number, required: false }, //Phí giao hàng
+    status: { type: String, enum:{values:['pendding' , 'shipped', 'delivered','canceled','completed']}, default: 'pendding' }, // Trạng thái đơn hàng (pending, shipped, delivered)
+    shippingAddress: { type: ObjectId, ref:DB_SCHEMA.ADDRESS, required: false }, // Địa chỉ giao hàng
+    payment_method: { type: String, enum: { values: ['vnpay', 'cash_on_delivery','paypal']},default: 'cash_on_delivery'},
+    payment_status: { type: String, enum: { values: ['pendding', 'paid','failed','canceled']},default: 'pendding'},
+    payment_time:{ type: Date, default: Date.now },
     createdAt: { type: Date, default: Date.now }, // Ngày tạo đơn hàng
 }, { timestamps: true });
 

@@ -1,0 +1,157 @@
+.order-detail-container{
+    display: flex;
+    padding: 3%;
+    gap: 20px;
+}
+
+.order-steps{
+    padding: 30px 20px;
+}
+
+.order-steps .anticon{
+    font-size: 18px;
+}
+.order-steps .ant-steps-item-title{
+    font-size: 14px;
+}
+
+/* css products table */
+.products-table-container{
+    width: 70%;
+}
+.custom-table .ant-table {
+    background-color: transparent !important;
+  }
+
+ .custom-table .ant-table-tbody > tr > td {
+    background-color: transparent !important;
+  }
+
+ .custom-table .ant-table-thead > tr > th {
+    background-color: transparent !important;
+    border-bottom: 0.5px solid #ccc; 
+    border-top: 0.5px solid #ccc; 
+    border-radius: 0px !important;
+    padding: 5px !important;
+  }
+  .custom-table .ant-table-tbody > tr > td {
+    border-bottom: 0.5px solid #ccc; /* Đặt màu và độ dày cho border-bottom */
+  }
+
+ .products-table .footer-table{
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 35px 20px 20px;
+    border-bottom: 0.5px solid #ccc; 
+}
+
+.products-table .footer-table span{
+    font-size: 14px;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 800;
+}
+
+
+/* css customer-info */
+.customer-info{
+    width: 100%;
+    padding: 5%;
+    display: flex;
+    justify-content: space-around;
+}
+.customer-info .details{
+    width: 30%;
+}
+.detail-header h3{
+    font-size: 19px;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 900;
+    margin-bottom: 20px;
+}
+.detail-row{
+    margin-bottom: 20px;
+}
+.detail-row .row-header{
+    display: flex;
+    gap: 5px;
+}
+.detail-row .anticon{
+    font-weight: bold;
+}
+.details .detail-row .detail-row-name{
+    font-size: 14px;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 800;
+    padding: 5px;
+}
+.detail-row .content-detail{
+    margin: 5px 0 5px 24px;
+    font-size: 13px;
+    font-family: 'Nunito Sans', sans-serif;
+    color: #447dff;
+    cursor: pointer;
+}
+.detail-row .address {
+    margin: 5px 0 5px 24px;
+    font-size: 13px;
+    font-family: 'Nunito Sans', sans-serif;
+    display: flex;
+    flex-direction: column;
+    gap:3px;
+    color: #898989;
+}
+.detail-row .content-detail:hover{
+    text-decoration: underline;
+}
+.summary-container{
+    width: 30%;
+}
+
+  /* Card Styles */
+ .summary-container .card {
+    background: white;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    border: solid 0.5px #ccc;
+}
+.summary-content .card-header{
+    padding: 15px;
+}
+.summary-content .card-header h2,
+.order-status-container .card-header h2 {
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    margin: 0;
+}
+.summary-container .price-row{
+    padding: 5px;
+    font-family: 'Nunito Sans', sans-serif;
+}
+.summary-container .price-row{
+    color: #666;
+    font-size: 16px;
+}
+.order-action {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+.order-action span{
+    font-size: 13px;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 800;
+
+}
+
+.order-action .ant-select, .variant-item .ant-select
+{
+  border: solid 0.5px #8a94ad;
+  border-radius: 5px;
+  height: 37px;
+  padding-left: 15px;
+  margin-top: 10px;
+  font-size: 10px;
+  color: #dadada;
+}

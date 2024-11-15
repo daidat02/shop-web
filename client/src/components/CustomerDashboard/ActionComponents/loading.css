@@ -1,0 +1,25 @@
+.loading-overlay {
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.5); /* Màu nền mờ */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    pointer-events: none; /* Cho phép tương tác phía dưới overlay */
+}
+
+.loading-overlay .loading-spin{
+    width: 100px;
+    height: 100px;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgb(255, 255, 255,0.5);
+    border-radius: 10px;
+}

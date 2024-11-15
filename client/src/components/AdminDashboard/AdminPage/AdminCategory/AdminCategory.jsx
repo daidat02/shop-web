@@ -171,7 +171,7 @@ function AdminCategory() {
         <div className='admin-search'>
           <Input
             prefix={<SearchOutlined style={{ color: '#8a94ad' }} />}
-            placeholder="Search Products"
+            placeholder="Search Categories"
             size="middle"
             style={{
               width: 300,

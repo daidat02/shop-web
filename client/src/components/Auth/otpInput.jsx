@@ -1,6 +1,5 @@
 /* eslint-disable react/prop-types */
 import {useEffect, useRef, useState} from "react";
-import { Link, useNavigate } from "react-router-dom";
 
 const OtpInput = ({length = 6, onOtpSubmit = () => {}}) => {
   const [otp, setOtp] = useState(new Array(length).fill(""));
@@ -23,8 +22,9 @@ const OtpInput = ({length = 6, onOtpSubmit = () => {}}) => {
 
     // submit trigger
     const combinedOtp = newOtp.join("");
-    if (combinedOtp.length === length) onOtpSubmit(combinedOtp);
-
+    if (combinedOtp.length === length) {
+      onOtpSubmit(combinedOtp);
+    }
     // Move to next input if current field is filled
     if (value && index < length - 1 && inputRefs.current[index + 1]) {
       inputRefs.current[index + 1].focus();
@@ -57,7 +57,6 @@ const OtpInput = ({length = 6, onOtpSubmit = () => {}}) => {
         <div className="otp-input-container">
             {otp.map((value, index) => {
                 return (
-                
                     <input
                         key={index}
                         type="text"

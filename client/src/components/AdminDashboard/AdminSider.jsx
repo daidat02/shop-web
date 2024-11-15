@@ -10,6 +10,7 @@ import {
   SettingOutlined,
   LogoutOutlined,
   FormOutlined,
+  ProductOutlined
 } from '@ant-design/icons';
 import { Menu, Layout } from 'antd';
 
@@ -19,50 +20,55 @@ const items = [
   {
     key: '/admin/home',
     icon: <HomeOutlined />,
-    label: 'Trang Chủ',
+    label: 'Home',
   },
   {
     key: '/admin/category',
     icon: <AppstoreOutlined />,
-    label: 'Danh Mục ',
+    label: 'Categories ',
   },
   {
     key: '/admin/products',
-    icon: <AppstoreOutlined />,
-    label: 'Sản Phẩm ',
+    icon: <ProductOutlined />,
+    label: 'Products',
   },
   
   {
-    key: '/admin/order',
+    key: '/admin/orders',
     icon: <ShoppingCartOutlined />,
-    label: 'Đơn Hàng',
+    label: 'Orders',
   },
   {
-    key: '/admin/voucher',
+    key: '/admin/discounts',
     icon: <GiftOutlined />,
-    label: 'Khuyến Mãi',
+    label: 'Discount',
   },
   {
-    key: 'manage',
+    key: '/admin/customers',
     icon: <TeamOutlined />,
-    label: 'Quản lý',
-    children: [
-      {
-        key: '/admin/staff',
-        icon: <TeamOutlined />,
-        label: 'Quản lý nhân sự',
-      },
-      {
-        key: '/admin/account',
-        icon: <UserOutlined />,
-        label: 'Quản lý tài khoản',
-      },
-    ],
+    label: 'Customers',
   },
+  // {
+  //   key: 'manage',
+  //   icon: <TeamOutlined />,
+  //   label: 'Quản lý',
+  //   children: [
+  //     {
+  //       key: '/admin/staff',
+  //       icon: <TeamOutlined />,
+  //       label: 'Quản lý nhân sự',
+  //     },
+  //     {
+  //       key: '/admin/account',
+  //       icon: <UserOutlined />,
+  //       label: 'Quản lý tài khoản',
+  //     },
+  //   ],
+  // },
   {
     key: 'user',
     icon: <SettingOutlined />,
-    label: 'Tài Khoản',
+    label: 'Account',
     children: [
       {
         key: '/admin/me',

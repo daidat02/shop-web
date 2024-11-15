@@ -111,6 +111,7 @@ const onFinish = async () => {
       });
       setVariants([]);
       setAvailableOptions([]);
+      
     } else {
       NotificationMessage.error('Tạo sản phẩm thất bại!');
     }

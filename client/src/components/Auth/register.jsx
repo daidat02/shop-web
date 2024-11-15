@@ -44,7 +44,6 @@ const Register = () => {
     const onRegisterSubmit = async (otp) => {
         const updatedData = { ...regData, otp: otp };
         setRegData(updatedData);
-
         try {
             setLoading(true);
            const respone = await registerAccount(dispatch, navigate, updatedData);
@@ -136,7 +135,6 @@ const Register = () => {
                             <p className="otp-back">
                                 <Link to="/login">Quay lại trang đăng nhập</Link>
                             </p>
-
                         </div>
                     ))}
                 </div>

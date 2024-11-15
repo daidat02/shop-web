@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { ShoppingCart, Loader } from 'lucide-react';
+import {Rate,Spin} from 'antd'
 import { useDispatch, useSelector } from 'react-redux';
 import { addProdToCart, getProductDetail } from '../../../api/API_Product';
 import NotificationMessage from '../../Message/NotificationMessage';
@@ -15,14 +16,16 @@ const ProductDetail = () => {
     
     const [product, setProduct] = useState(initialProdDetail);
     const [quantity, setQuantity] = useState(1);
-    const [isLoading, setIsLoading] = useState(false);
-
+    const [isLoading, setIsLoading] = useState(true);
+    const [selectedImage, setSelectedImage] = useState();
+    const [inStock,setInStock]= useState(true);
     // Fetch product details on mount or when productId changes
     useEffect(() => {
         const fetchProductDetails = async () => {
             try {
                 setIsLoading(true);
-                await getProductDetail(dispatch, productId);
+               const response= await getProductDetail(dispatch, productId);
+               setSelectedImage(response?.images?.[0]?.url || '/placeholder-image.jpg')
             } catch (error) {
                 NotificationMessage.error('Không thể tải thông tin sản phẩm.');
             } finally {
@@ -58,8 +61,8 @@ const ProductDetail = () => {
                 product_id: product.product_id,
                 quantity
             };
-
-            const result = await addProdToCart(account.accessToken, dispatch, addData);
+            console.log(addData)
+            const result = await addProdToCart(account.accessToken, addData);
 
             if (result.success) {
                 NotificationMessage.success('Thêm sản phẩm thành công!');
@@ -82,30 +85,39 @@ const ProductDetail = () => {
         console.log('Implement buy now functionality');
     };
 
-    if (isLoading) {
-        return (
-            <div className="loading-container">
-                <Loader className="animate-spin" size={40} />
-                <p>Đang tải...</p>
-            </div>
-        );
-    }
-
-    if (!product || Object.keys(product).length === 0) {
-        return (
-            <div className="error-container">
-                <p>Không tìm thấy thông tin sản phẩm.</p>
-            </div>
-        );
-    }
-
     return (
         <div className="product-detail-container">
+            {isLoading && (
+                <div className="loading-overlay">
+                    <Spin size="large" />
+                </div>
+            )}
             <div className="product-detail">
+                <div className='list-img'>
+                    <div className='img-item'>
+                        {product?.images && product.images.length > 0 ? (
+                                product.images.map((image, index) => (
+                                    <img
+                                        key={index}
+                                        src={image.url}
+                                        alt={`${product.product_name} - Image ${index + 1}`}
+                                        onClick={() => setSelectedImage(image.url)}
+                                        className={selectedImage === image.url ? 'img-item selected' : 'img-item'}
+                                        onError={(e) => {
+                                            e.target.onerror = null;
+                                            e.target.src = '/placeholder-image.jpg'; // Hình ảnh thay thế khi lỗi
+                                        }}
+                                    />
+                                ))
+                            ) : (
+                                <div className="no-image">Không có hình ảnh</div>
+                            )}
+                    </div>
+                </div>
                 <div className="product-img">
                     {product?.images?.[0]?.url ? (
                         <img 
-                            src={product.images[0].url} 
+                            src={selectedImage} 
                             alt={product.product_name} 
                             className="product-image"
                             onError={(e) => {
@@ -119,31 +131,63 @@ const ProductDetail = () => {
                 </div>
                 
                 <div className="product-content">
+                   
                     <div className="product-info">
-                        <h1 className="product-name">
-                            {product.product_name}
-                        </h1>
-                        
-                        <div className="product-price">
-                            {new Intl.NumberFormat('vi-VN', {
-                                style: 'currency',
-                                currency: 'VND'
-                            }).format(product.price)}
+                         <div className='rate-container'> 
+                            <Rate disabled defaultValue={5} style={{color:'orange'}} className="custom-rate"/>
+                            <div className='review'> 653 Lượt đánh giá</div>
+                            <div className='review'>823 Đã Bán</div>
                         </div>
-                        
-                        <div className="product-description">
+                        <h3 className="product-name">
+                            {product?.product_name}
+                        </h3>
+                        <div className='product-tag'>
+                            <span className='tag-name'>
+                                 #1 Best Saller
+                            </span>
+                            <span className='tag-decrs'>Sản Phẩm bán chạy </span>
+                        </div>
+                        <div className="price-container">
+                           <span className='product-price'>
+                            {product?.price.toLocaleString()}đ
+                           </span>
+
+                           <span className='sale-price'>
+                            {product?.price.toLocaleString()}đ
+                           </span>
+
+                           <span className='discount-percent'>10% off</span>
+                        </div>
+
+                        {/* <div className="product-description">
                             {product.description || 'Không có mô tả'}
-                        </div>
+                        </div> */}
 
                         <div className="quantity-section">
                             <label className="quantity-label">Số lượng:</label>
-                            <QuantityControl 
-                                initialQuantity={quantity}
-                                onQuantityChange={handleQuantityChange}
-                                maxQuantity={product.stock_quantity} // Add stock quantity check if available
-                            />
+                            <div style={{display:'flex' , alignItems:'center'}}>
+                                <QuantityControl 
+                                    initialQuantity={quantity}
+                                    onQuantityChange={handleQuantityChange}
+                                    maxQuantity={product?.stock_quantity} // Add stock quantity check if available
+                                />
+                                <span className='warehouse'>{product?.quantity} Sản Phẩm có sẵn</span>
+                            </div>
+                            
+                            {product?.quantity > 0 ? (
+                                <div className='in-stock'>
+                                        <span>Còn Hàng</span>
+                                </div>
+                            ):(
+                                <div className='in-stock'>
+                                    <span>Hết Hàng</span>
+                                </div>
+                            )}
                         </div>
+                        
                     </div>
+
+                  
 
                     <div className="product-actions">
                         <button 

@@ -135,6 +135,7 @@
   text-decoration: underline;
 }
 
+/* ccs otp input */
 .otp-confirm-container{
   margin: 20px;
 }
@@ -160,9 +161,10 @@
   width: 40px;
   height: 40px;
   margin: 5px;
+  border-radius: 5px;
   text-align: center;
   font-size: 1.2em;
-  border: solid 1px #0066cc ;
+  border: solid 2px #0066cc ;
 }
 
 .otp-button {

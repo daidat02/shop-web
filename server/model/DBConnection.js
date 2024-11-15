@@ -8,6 +8,8 @@ import Order from './OrderSchema.js';
 import OTP from './OTPSchema.js';
 import Variant from './VariantSchema.js';
 import Tag from './TagSchema.js';
+import Address from './AddressSchema.js';
+import Voucher from './VoucherSchema.js';
 const DB_Connection = {
      Account,
      User,
@@ -18,7 +20,9 @@ const DB_Connection = {
      Order,
      OTP,
      Variant,
-     Tag
+     Tag,
+     Address,
+     Voucher
 };
 
 // Xuất DB_Connection

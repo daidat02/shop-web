@@ -8,6 +8,10 @@ import AdminCategory from './AdminCategory/AdminCategory';
 import CreateCategoryForm from './AdminCategory/CreateCategoryForm';
 import AdminProduct from '../AdminPage/AdminProduct/AdminProduct';
 import CreateProduct from './AdminProduct/CreateProduct';
+import AdminOrder from './AdminOrder/AdminOrder';
+import AdminCustomer from './AdminCustomer/AdminCustomer';
+import AdminDiscount from './AdminDiscount/AdminDiscount';
+import AdminOrderDetail from './AdminOrder/AdminOrderDetail';
 const { Header, Content, Footer, Sider } = Layout;
 
 
@@ -59,6 +63,10 @@ const AdminHome = () => {
                 <Route path="category" element={<AdminCategory />} />
                 <Route path="products" element={<AdminProduct />} />
                 <Route path="/create-product/:categoryId" element={<CreateProduct />} />
+                <Route path="orders" element={<AdminOrder/>} />
+                <Route path="customers" element={<AdminCustomer/>} />
+                <Route path="discounts" element={<AdminDiscount/>} />
+                <Route path="order/order-detail/:orderId" element={<AdminOrderDetail/>}/>
               </Routes>
             </Content>
         </Layout>

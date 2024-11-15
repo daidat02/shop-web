@@ -26,16 +26,27 @@ const API_PATH = {
     ADD_TO_SHOPPINGCART:"/shopping/add",
     REMOVE_ITEM_CART:"/shopping/:itemId",
     //order
-    GET_ORDERS:"/order/:status",
+    GET_ORDERS:"/order",
+    GET_MY_ORDERS:"/order/me",
     CREATE_ORDER:"/order/create",
-    UPDATE_STATUS_ORDER:"/order/update",
-    REMOVE_ORDER:"/order/:orderId",
+    UPDATE_STATUS_ORDER:"/order/update/:orderId",
+    CANCEL_ORDER:"/order/:orderId",
+    GET_ORDER_BY_ID:"/order/order-detail/:orderId",
     //uplaod
     UPLOAD_IMAGE:"/upload/images",
 
     //brand
     GET_BRAND:"/brand/",
-    CREATE_BRAND:"/brand/create"
+    CREATE_BRAND:"/brand/create",
+    //user
+    ADD_ADDRESS: "/address/add",
+    GET_ADDRESS: "/address/",
+    GET_CUSTOMERS:"/customer/",
+    //discount
+    ADD_VOUCHER: "/voucher/add",
+    GET_VOUCHER: "/voucher/",
+    //send email 
+    SEND_INFO_ORDER:"/send/info-order"
 };
 
 const STATUS = {
@@ -58,11 +69,102 @@ const DB_SCHEMA = {
     SHOPINGCART:'ShoppingCart',
     ORDER: 'Order',
     VARIANT:'Variant',
-    TAG: 'Tag'
+    TAG: 'Tag',
+    ADDRESS: 'Address',
+    VOUCHER: 'Voucher'
 };
 
+function generateID(length) {
+    let otp = '';
+    for (let i = 0; i < length; i++) {
+        otp += Math.floor(Math.random() * 10);
+    }
+    return otp;
+}
 
 const createRandomID = ()=>{
     return uuidv4();
 }
-export  { API_PATH, STATUS, DB_SCHEMA , createRandomID};
+
+// const OTPOption = {
+//     from: "daidat1202@gmail.com",
+//     to: email,
+//     subject: 'Mã xác thực OTP',
+//     html: `
+//         <html>
+//             <head>
+//                 <style>
+//                     body {
+//                         font-family: Arial, sans-serif;
+//                         background-color: #f4f4f4;
+//                         margin: 0;
+//                         padding: 0;
+//                         color: #333;
+//                     }
+//                     .email-container {
+//                         max-width: 600px;
+//                         margin: 20px auto;
+//                         background-color: #ffffff;
+//                         border-radius: 8px;
+//                         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+//                         padding: 20px;
+//                     }
+//                     .email-header {
+//                         text-align: center;
+//                         padding: 10px 0;
+//                         border-bottom: 1px solid #ddd;
+//                     }
+//                     .email-header h2 {
+//                         color: #000;
+//                         margin: 0;
+//                     }
+//                     .email-body {
+//                         padding: 20px 0;
+//                         text-align: center;
+//                     }
+//                     .otp-code {
+//                         font-size: 24px;
+//                         font-weight: bold;
+//                         color: #000;
+//                         margin: 20px 0;
+//                         padding: 10px;
+//                         border-radius: 5px;
+//                         background-color: #f4f9f4;
+//                         display: inline-block;
+//                     }
+//                     .email-footer {
+//                         text-align: center;
+//                         font-size: 12px;
+//                         color: #777;
+//                         margin-top: 30px;
+//                         padding-top: 10px;
+//                         border-top: 1px solid #ddd;
+//                     }
+//                 </style>
+//             </head>
+//             <body>
+//                 <div class="email-container">
+//                     <div class="email-header">
+//                         <h2>Mã xác thực OTP của bạn</h2>
+//                     </div>
+//                     <div class="email-body">
+//                         <p>Chào bạn,</p>
+//                         <p>Đây là mã OTP để xác thực email của bạn:</p>
+//                         <div class="otp-code">${otp}</div>
+//                         <p>Mã OTP này có hiệu lực trong 10 phút. Vui lòng không chia sẻ mã này với bất kỳ ai.</p>
+//                     </div>
+//                     <div class="email-footer">
+//                         <p>Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi.</p>
+//                     </div>
+//                 </div>
+//             </body>
+//         </html>
+//     `
+// }
+
+// const MAIL_OPTION={
+//   OTP_OPTION:OTPOption
+// }
+
+
+export  { API_PATH, STATUS, DB_SCHEMA , createRandomID, generateID};

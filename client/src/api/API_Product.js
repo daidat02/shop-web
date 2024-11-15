@@ -56,18 +56,17 @@ export const getProductDetail = async(dispacth,productId)=>{
     try {
         const res = await axios.get(`/prod-detail/${productId}` )
         dispacth(getproductDetailSuccess(res.data));
+        return (res.data)
     } catch (error) {
         console.log(error);
     }
 }
 
-export const addProdToCart = async(accessToken, dispacth, data)=>{
+export const addProdToCart = async(accessToken, data)=>{
     try {
         const res = await axios.post(`/shopping/add` , data, {
             headers:{token: `Bearer ${accessToken}`}
         });
-
-        dispacth(addProdToCartSuccess());
         return{success:true}
     } catch (error) {
         return {success:false}

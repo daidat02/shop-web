@@ -6,6 +6,7 @@ import QuantityControl from '../ProductDetail/QuantityControl';
 import './cart.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCart } from '../../../api/API_Cart';
+import LoadingOverlay from '../ActionComponents/LoadingOverlay';
 
 // Hàm định dạng giá
 const formatPrice = (price) => {
@@ -21,6 +22,7 @@ const ShoppingCart = () => {
   const [checkedItems, setCheckedItems] = useState([]);
   const [checkAll, setCheckAll] = useState(false);
   const [shippingAddress, setShippingAddress] = useState("");
+
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -89,12 +91,11 @@ const ShoppingCart = () => {
       alert('Bạn chưa chọn sản phẩm nào.');
       return;
     }
-
+    
     try {
       const selectedItems = cartItems?.filter(item => 
         item?.product && checkedItems.includes(item.product._id)
       );
-
       navigate('/order', {
         state: {
           items: selectedItems,
@@ -123,6 +124,8 @@ const ShoppingCart = () => {
           <img src={url} alt="Product" style={{ width: '50px', height: '50px' }} />
         </div>
       ),
+      align: 'center'
+
     },
     {
       title: 'Tên sản phẩm',
@@ -134,6 +137,8 @@ const ShoppingCart = () => {
       dataIndex: ['product', 'price'],
       key: 'price',
       render: (price) => formatPrice(price),
+      align: 'center'
+
     },
     {
       title: 'Số lượng',
@@ -145,11 +150,14 @@ const ShoppingCart = () => {
           onQuantityChange={(newQuantity) => handleQuantityChange(record.product._id, newQuantity)}
         />
       ),
+      align: 'center'
     },
     {
       title: 'Tổng tiền',
       key: 'totalPrice',
       render: (_, record) => formatPrice(record.quantity * record.product.price),
+      align: 'center'
+
     },
     {
       title: 'Hành động',
@@ -161,11 +169,14 @@ const ShoppingCart = () => {
           onClick={() => handleRemoveItem(record.product._id)}
         />
       ),
+      align: 'center'
+
     },
   ];
 
   return (
     <div className="cart-container">
+      
       <div className="cart-header">
         <h2>
           <CartIcon size={32} />
