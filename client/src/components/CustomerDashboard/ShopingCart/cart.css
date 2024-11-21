@@ -59,7 +59,14 @@
 }
 
 .order-button {
-    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    margin-bottom: 10px ;
+}
+.order-button .ant-btn{
+  width: 90%;
+  height: 40px;
 }
 
   .cart-content .ant-card {

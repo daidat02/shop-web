@@ -5,6 +5,8 @@ const API_PATH = {
     CHECK_OTP:"/otp/check-otp",
     REG_ACC: "/auth/reg",
     LOGIN: "/auth/login",
+    REFRESH_TOKEN:"/auth/refresh",
+    LOGOUT:'/auth/logout',
     //category
     GET_CAT:"/cat/get",
     CREATE_CAT: "/cat/create",
@@ -39,14 +41,21 @@ const API_PATH = {
     GET_BRAND:"/brand/",
     CREATE_BRAND:"/brand/create",
     //user
-    ADD_ADDRESS: "/address/add",
+    ADD_ADDRESS: "/customer/address/add",
     GET_ADDRESS: "/address/",
     GET_CUSTOMERS:"/customer/",
+    GET_PROFILE_USER:"/customer/profile",
+    UPDATE_ADDRESS_DEFAULT:"/customer/update-adress/:addressId",
     //discount
     ADD_VOUCHER: "/voucher/add",
     GET_VOUCHER: "/voucher/",
     //send email 
-    SEND_INFO_ORDER:"/send/info-order"
+    SEND_INFO_ORDER:"/send/info-order",
+    RESET_PASS:"/send/reset-pass",
+    RETURN_NEWPASS:"/send/return-newpass",
+
+    //message 
+    GET_MESSAGE:`/message`
 };
 
 const STATUS = {
@@ -71,7 +80,8 @@ const DB_SCHEMA = {
     VARIANT:'Variant',
     TAG: 'Tag',
     ADDRESS: 'Address',
-    VOUCHER: 'Voucher'
+    VOUCHER: 'Voucher',
+    MESSAGE:'Message'
 };
 
 function generateID(length) {

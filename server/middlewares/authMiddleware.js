@@ -10,9 +10,8 @@ const vertifyToken = async(req, res, next)=>{
                 return res.status(403).json('token is not valid');
             }
             req.user=user;
-                console.log('Token verified, user:', user);
             next();
-        }) 
+        })
     }
     else{
         return res.status(401).json('You are not authentication');

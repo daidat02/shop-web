@@ -5,22 +5,25 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import NotificationMessage from '../../../Message/NotificationMessage';
 import { getCustomers } from '../../../../api/API_User';
+import getAxiosInstance, { createAxiosInstance } from '../../../../createInstance';
 
 const { Option } = Select;
 
 const AdminCustomer = () => {
+  const initialAccount = useSelector((state) => state.auth?.account);
   const msg = useSelector((state) => state.products.msg);
-  const dispatch = useDispatch();
-  const [customers,setCustomers] = useState([]);
+  const accessToken = initialAccount?.accessToken
+  const dispatch = useDispatch()
+  let axiosJWT = createAxiosInstance(initialAccount,dispatch); 
+   const [customers,setCustomers] = useState([]);
   const navigate = useNavigate();
-
   useEffect(() => {
     fetchApi();
   }, []);
 
   const fetchApi = async () => {
     try {
-      const customersData = await getCustomers();
+      const customersData = await getCustomers(accessToken,axiosJWT);
       setCustomers(customersData.data)
     } catch (error) {
       console.log("Không thể tải danh mục");
@@ -51,9 +54,13 @@ const AdminCustomer = () => {
   // };
 
   const columns = [
-   
     {
-      title: 'Customer',
+      title: '',
+      render: (_, __, index) => `${index + 1}`,
+      width: 20,
+    },
+    {
+      title: 'Tên Khách Hàng',
       dataIndex: 'user_name',
       key: 'user_name',
       width: 150,
@@ -79,14 +86,14 @@ const AdminCustomer = () => {
       sorter: (a, b) => a.email.localeCompare(b.email), // Sắp xếp theo số điện thoại
     },
     {
-        title: 'Address',
-        dataIndex: 'address',
-        key: 'address',
+        title: 'Địa CHỉ',
+        dataIndex: ['address','province'],
+        key: 'province',
         width: 120,
         align: 'center',
       },
     {
-      title: 'Order',
+      title: 'Tổng Đơn',
       dataIndex: 'order_quantity',
       key: 'order_quantity',
       width: 60,
@@ -94,16 +101,18 @@ const AdminCustomer = () => {
       sorter: (a, b) => a.order_quantity - b.order_quantity, // Sắp xếp theo tổng tiền
     },
     {
-      title: 'Total Spent',
+      title: 'Tổng Chi Tiêu',
       dataIndex: 'total_spent',
       key: 'total_spent',
       width: 100,
       align: 'center',
       sorter: (a, b) => a.total_spent - b.total_spent, // Sắp xếp theo tổng tiền
+      render: (amount) => amount.toLocaleString('vi-VN') + ' đ'
+
     },
    
     {
-      title: 'Account Status',
+      title: 'Trạng Thái Tại Khoản',
       dataIndex: 'isAccount',
       key: 'isAccount',
       width: 120,
@@ -120,12 +129,12 @@ const AdminCustomer = () => {
       sorter: (a, b) => a.isAccount - b.isAccount, // Sắp xếp theo trạng thái tài khoản
     },
     {
-      title: 'Last Order',
+      title: 'Đơn Hàng gần Nhất',
       dataIndex: 'last_order',
       key: 'last_order',
       width: 150,
       align: 'center',
-      render: (last_order) => new Date(last_order).toLocaleDateString('en-GB'),
+      render: (last_order) => new Date(last_order).toLocaleDateString('en-GB') || '',
       sorter: (a, b) => new Date(a.last_order) - new Date(b.last_order), // Sắp xếp theo ngày tạo
     },
     {
@@ -153,34 +162,34 @@ const AdminCustomer = () => {
   return (
     <div className='content-container'>
       <Breadcrumb style={{ margin: '25px 50px' }}>
-        <Breadcrumb.Item><a>Admin</a></Breadcrumb.Item>
-        <Breadcrumb.Item>Customers</Breadcrumb.Item>
+        <Breadcrumb.Item><a>Trang Chủ</a></Breadcrumb.Item>
+        <Breadcrumb.Item>Khách Hàng</Breadcrumb.Item>
       </Breadcrumb>
 
       <div className='title-container'>
-        <h1 className='content-title'>Customers</h1>
+        <h1 className='content-title'>Khách Hàng</h1>
       </div>
 
-      <div className='list-state-product'>
+      {/* <div className='list-state-product'>
         <ul>
           <li><a>All</a> (823)</li>
           <li><a>Pending</a>(780)</li>
           <li><a>Completed</a>(234)</li>
           <li><a>Canceled</a>(20)</li>
         </ul>
-      </div>
+      </div> */}
 
       <div className='action-nav'>
         <div className='admin-search'>
           <Input
             prefix={<SearchOutlined style={{ color: '#8a94ad' }} />}
-            placeholder="Search Customers"
+            placeholder="Tìm Khách Hàng"
             size="middle"
             style={{ width: 300, padding: '6px 10px' }}
           />
         </div>
 
-        <div className='btn-filters'>
+        {/* <div className='btn-filters'>
           <Select defaultValue="Status" style={{ width: 120 }} >
               <Option value="1">Pendding</Option>
               <Option value="2">Shipped</Option>
@@ -197,19 +206,19 @@ const AdminCustomer = () => {
             <Option value="2">Option 2</Option>
             <Option value="3">Option 3</Option>
           </Select>
-        </div>
+        </div> */}
 
         <div className='btn-action'>
-          <Button className='btn-export' style={{ background: 'none' }}>
+          {/* <Button className='btn-export' style={{ background: 'none' }}>
           <PrinterOutlined /> Export
-          </Button>
+          </Button> */}
 
           <Button
             type="primary"
             icon={<PlusOutlined />}
             style={{ fontSize: 10 }}
           >
-            Add Customer
+            Thêm Khách Hàng
           </Button>
         </div>
       </div>

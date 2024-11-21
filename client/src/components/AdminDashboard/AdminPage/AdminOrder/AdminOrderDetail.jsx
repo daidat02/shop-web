@@ -7,15 +7,16 @@ import {CheckCircleOutlined, SyncOutlined, ClockCircleOutlined,
 import './order-detail.css'
 import { getDetailOrder, updateStatusOrder } from '../../../../api/API_Order';
 import { useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 const { Option } = Select;
 
 const AdminOrderDetail = () => {
-
-
-    const { orderId } = useParams(); // Lấy orderId từ URL params
-    const [order,setOrder] = useState([]);
-    const [products,setProducts] =useState([]);
-    const [selectedStatus,setSelectedStatus]= useState();
+  const initialAccount = useSelector((state) => state.auth?.account);
+  const accessToken = initialAccount?.accessToken
+  const { orderId } = useParams(); // Lấy orderId từ URL params
+  const [order,setOrder] = useState([]);
+  const [products,setProducts] =useState([]);
+  const [selectedStatus,setSelectedStatus]= useState();
   useEffect(() => {
     fetchApi();
   }, []);
@@ -56,7 +57,7 @@ const AdminOrderDetail = () => {
       ),
     },
     {
-      title: 'Product Name',
+      title: 'Tên Sản Phẩm',
       dataIndex: ['product', 'product_name'],
       key: 'product_name',
       render: (product_name) => (
@@ -65,16 +66,16 @@ const AdminOrderDetail = () => {
       width:350
     },
     {
-      title: 'Price',
+      title: 'Giá',
       dataIndex: ['product', 'price'],
       key: 'price',
-      render: (price) => `${price} VND`,
+      render: (price) => `${formatCurrency(price)}`,
       align:'center',
       width:150,
 
     },
     {
-      title: 'Quantity',
+      title: 'Số Lượng',
       dataIndex: 'quantity',
       key: 'quantity',
       align:'center',
@@ -82,11 +83,11 @@ const AdminOrderDetail = () => {
 
     },
     {
-      title: 'Total',
+      title: 'Tổng',
       key: 'total',
-      render: (text, record) => `${record.priceTotal} VND`,
+      render: (text, record) => `${formatCurrency(record.priceTotal)}`,
       width:150,
-      align:'center'
+      align:'center',
     },
   ];
 
@@ -108,17 +109,25 @@ const AdminOrderDetail = () => {
       }
     };
 
+    const formatCurrency = (amount) => {
+      return new Intl.NumberFormat('vi-VN', {
+        style: 'currency',
+        currency: 'VND',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(amount);
+    };
   return (
     <div className='content-container'>
       <Breadcrumb style={{ margin: '25px 50px' }}>
-        <Breadcrumb.Item><a>Admin</a></Breadcrumb.Item>
-        <Breadcrumb.Item>Orders</Breadcrumb.Item>
-        <Breadcrumb.Item>Order #353432</Breadcrumb.Item>
+        <Breadcrumb.Item><a>Trang Chủ</a></Breadcrumb.Item>
+        <Breadcrumb.Item>Đơn Hàng</Breadcrumb.Item>
+        <Breadcrumb.Item>Đơn Hàng #{orderId}</Breadcrumb.Item>
 
       </Breadcrumb>
 
       <div className='title-container'>
-        <h1 className='content-title'>Order #{orderId}</h1>
+        <h1 className='content-title'>Đơn Hàng #{orderId}</h1>
       </div>
       <div className='order-detail-container'>
         <div className='products-table-container'>
@@ -126,22 +135,22 @@ const AdminOrderDetail = () => {
                 <Steps
                     items={[
                         {
-                        title: 'Pendding',
+                        title: 'Xử Lý',
                         status: getStepStatus(0),
                         icon: <ClockCircleOutlined />,
                         },
                         {
-                        title: 'Shipped',
+                        title: 'Vận Chuyển',
                         status: getStepStatus(1),
                         icon: <SyncOutlined />,
                         },
                         {
-                        title: 'Delivered',
+                        title: 'Đã Giao',
                         status: getStepStatus(2),
                         icon: <EnvironmentOutlined />,
                         },
                         {
-                        title: 'Completed',
+                        title: 'Hoàn Thành',
                         status: getStepStatus(3),
                         icon: <CheckCircleOutlined />,
                         },
@@ -156,20 +165,20 @@ const AdminOrderDetail = () => {
                         className="custom-table" // Thêm lớp tùy chỉnh vào đây
                     />
                     <div className='footer-table'>
-                        <span>Items subtotal:</span>
-                        <span>{order?.totalBill} VND</span>
+                        <span>Tổng Giá Sản Phẩm:</span>
+                        <span>{formatCurrency(order?.totalBill)}</span>
                     </div>
                </div>
                 <div className='customer-info'>
                     <div className='payment-detail details'>
 
                         <div className='detail-header'>
-                            <h3>Payment details</h3>
+                            <h3>Chi Tiết Thanh Toán</h3>
                         </div>
                         <div className='detail-row'>
                                 <div className='row-header'> 
                                 <UserOutlined/> 
-                                    <span className='detail-row-name'>Customer</span>
+                                    <span className='detail-row-name'>Khách Hàng</span>
                                 </div>
                                 <span className='content-detail'>{order?.user?.user_name}</span>
                             </div>
@@ -184,14 +193,14 @@ const AdminOrderDetail = () => {
                             <div className='detail-row'>
                                 <div className='row-header'> 
                                      <PhoneOutlined />
-                                    <span className='detail-row-name'>Phone</span>
+                                    <span className='detail-row-name'>SDT</span>
                                 </div>
                                 <span className='content-detail'>{order?.user?.phonenumber}</span>
                             </div>
                             <div className='detail-row'>
                                 <div className='row-header'> 
                                     <CreditCardOutlined />
-                                    <span className='detail-row-name'>Payment Method</span>
+                                    <span className='detail-row-name'>Phương Thức</span>
                                 </div>
                                 <Tag className='content-detail' color='blue'>{order?.payment_method}</Tag>
                             </div>
@@ -199,13 +208,13 @@ const AdminOrderDetail = () => {
 
                     <div className='shipping-detail details'>
                     <div className='detail-header'>
-                            <h3>Shipping details</h3>
+                            <h3>Chi Tiết Vận Chuyển</h3>
                     </div>
 
                     <div className='detail-row'>
                                 <div className='row-header'> 
                                 <UserOutlined/> 
-                                    <span className='detail-row-name'>Recipient</span>
+                                    <span className='detail-row-name'>Người Nhận</span>
                                 </div>
                                 <span className='content-detail'>{order?.shippingAddress?.recipient_name}</span>
                             </div>
@@ -220,14 +229,14 @@ const AdminOrderDetail = () => {
                             <div className='detail-row'>
                                 <div className='row-header'> 
                                      <PhoneOutlined />
-                                    <span className='detail-row-name'>Phone</span>
+                                    <span className='detail-row-name'>SDT</span>
                                 </div>
                                 <span className='content-detail'>{order?.user?.phonenumber}</span>
                             </div>
                             <div className='detail-row'>
                                 <div className='row-header'> 
                                      <EnvironmentOutlined />
-                                    <span className='detail-row-name'>Address</span>
+                                    <span className='detail-row-name'>Địa Chỉ</span>
                                 </div>
                                 <div className='address'>
                                   <span >{order?.shippingAddress?.street}</span>
@@ -239,20 +248,20 @@ const AdminOrderDetail = () => {
 
                     <div className='other-detail details'>
                          <div className='detail-header'>
-                            <h3>Other details</h3>
+                            <h3>Khác</h3>
                         </div>
                         <div className='detail-row'>
                             <div className='detail-row'>
                                 <div className='row-header'> 
                                      <GiftOutlined />
-                                    <span className='detail-row-name'>Gift order</span>
+                                    <span className='detail-row-name'>Quà Tặng</span>
                                 </div>
                                 <span className='content-detail'>Yes</span>
                             </div>
 
                                 <div className='row-header'> 
                                 <MessageOutlined />
-                                <span className='detail-row-name'>Message</span>
+                                <span className='detail-row-name'>Ghi Chú</span>
                                 </div>
                                 <p className='content-detail'>Happy Birthday Shiniga Lots of Love Buga Buga!!</p>
                             </div>
@@ -262,67 +271,71 @@ const AdminOrderDetail = () => {
         <div className='summary-container'>
             <div className='summary-content card'>
                 <div className="card-header">
-                  <h2>Sumary</h2>
+                  <h2>Chi Tiết</h2>
                 </div>            
                 <div className='card-body'>
                     <div className='price-row'>
-                        <span>Items subtotal :</span>
-                        <span>{order?.totalBill} VND</span>
+                        <span>Tổng Sản Phẩm :</span>
+                        <span>{formatCurrency(order?.totalBill)} </span>
                     </div>
                     <div className='price-row'>
-                        <span>Discount :</span>
-                        <span>{order?.discountAmount} VND</span>
+                        <span>Khuyến Mãi :</span>
+                        <span>{formatCurrency(order?.discountAmount)} </span>
                     </div>
                     <div className='price-row'>
-                        <span>Shipping Cost  :</span>
-                        <span>{order?.shippingCost} VND</span>
+                        <span>Phí Vận Chuyển  :</span>
+                        <span>{formatCurrency(order?.shippingCost)} </span>
                     </div>
 
                     <div className='price-row'>
-                        <span>Subtotal :</span>
-                        <span>{order?.shippingCost+order?.totalBill - order?.discountAmount} VND</span>
+                        <span>Tổng :</span>
+                        <span>{formatCurrency(order?.shippingCost+order?.totalBill - order?.discountAmount)}</span>
                     </div>
                     
                     <div className="divider"></div>
                     <div className='price-row total'>
-                        <span >Total  :</span>
-                        <span>{order?.finalAmount} VND</span>
+                        <span >Tổng Đơn  :</span>
+                        <span>{formatCurrency(order?.finalAmount)}</span>
                     </div>
                 </div>
             </div>
-            <div className='order-status-container card'>
-                <div className="card-header">
-                  <h2> Order Status</h2>
-                </div>
-                <div className='card-body'>
-                    <div className='order-action'>
-                        <span>Order Status</span>
-                        <Select 
-                            value={order.status}
-                            placeholder="Order Status"
-                            onChange={(value) => handleUpdateStatus( value)}
-                            >
-                                <Option value="pendding">Pendding</Option>
-                                <Option value="shipped">Shipped</Option>
-                                <Option value="delivered">Delivered</Option>
-                                <Option value="completed">Completed</Option>
-                                <Option value="canceled">Canceled</Option>
-                        </Select>
-                    </div>
-                    <div className='order-action'>
-                        <span>Payment Status</span>
-                        <Select 
-                            value={order.payment_status}
-                            placeholder="Order Status"
-                            onChange={(value) =>console.log(value)}
-                        >
-                                <Option value="pendding">Pendding</Option>
-                                <Option value="paid">Paid</Option>
-                        </Select>
-                    </div>
-    
-                </div>
-            </div>
+            {initialAccount?.user.role === 'admin' && (
+              <div className='order-status-container card'>
+                  <div className="card-header">
+                    <h2> Trạng Thái Đơn Hàng</h2>
+                  </div>
+                  <div className='card-body'>
+                          <div className='order-action'>
+                          <span>Cập Nhật Trạng Thái</span>
+                          <Select 
+                              value={order.status}
+                              placeholder="Order Status"
+                              onChange={(value) => handleUpdateStatus( value)}
+                              >
+                                  <Option value="pendding">Chờ Xử Lý</Option>
+                                  <Option value="shipped">Đã Vẫn Chuyển</Option>
+                                  <Option value="delivered">Đã Giao Hàng</Option>
+                                  <Option value="completed">Hoàn Thành</Option>
+                                  <Option value="canceled">Thất Bại</Option>
+                          </Select>
+                        </div>                    
+                      <div className='order-action'>
+                          <span>Trạng Thái Thanh Toán</span>
+                          <Select 
+                              value={order.payment_status}
+                              placeholder="Order Status"
+                              onChange={(value) =>console.log(value)}
+                          >
+                                  <Option value="pendding">Chờ Xử Lý</Option>
+                                  <Option value="paid">Đã Thanh Toán</Option>
+                                  <Option value="canceled">Thất Bại</Option>
+
+                          </Select>
+                      </div>
+      
+                  </div>
+              </div>
+            )}
         </div>
      
       </div>

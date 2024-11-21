@@ -32,6 +32,10 @@ const addressSchema = new Schema({
     type:{
         type: String,
         required: false // Có thể không bắt buộc
+    },
+    isDefault:{
+        type:Boolean,
+        default:false
     }
 });
 

@@ -3,6 +3,8 @@ import { Result, Button, Spin, message } from 'antd';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { vnpayReturn } from '../../../api/API_Payment';
+import { sendInfoOrder } from '../../../api/API_SendEmail';
+import { useSelector } from 'react-redux';
 
 // Constants
 const PAYMENT_STATUS = {
@@ -19,12 +21,15 @@ const formatCurrency = (amount) => {
 };
 
 const VNPayReturn = () => {
+    const initialAccount = useSelector((state)=> state.auth?.account)
+    const user = initialAccount?.user
+
     const [loading, setLoading] = useState(true);
     const [paymentStatus, setPaymentStatus] = useState(null);
     const [transactionInfo, setTransactionInfo] = useState({});
     const location = useLocation();
     const navigate = useNavigate();
-
+    
     useEffect(() => {
         const verifyPayment = async () => {
             if (!location.search) {
@@ -49,6 +54,8 @@ const VNPayReturn = () => {
                 if (response.success) {
                     setPaymentStatus(PAYMENT_STATUS.SUCCESS);
                     setTransactionInfo(response.data);
+                    await sendInfoOrder(user?.email,response.orderId);
+
                     message.success("Thanh toán thành công!");
                 } else {
                     setPaymentStatus(PAYMENT_STATUS.FAILED);

@@ -10,6 +10,7 @@ import Variant from './VariantSchema.js';
 import Tag from './TagSchema.js';
 import Address from './AddressSchema.js';
 import Voucher from './VoucherSchema.js';
+import MessageModel from './MessageSchema.js';
 const DB_Connection = {
      Account,
      User,
@@ -22,7 +23,8 @@ const DB_Connection = {
      Variant,
      Tag,
      Address,
-     Voucher
+     Voucher,
+     MessageModel
 };
 
 // Xuất DB_Connection

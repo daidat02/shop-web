@@ -62,12 +62,12 @@ export const getProductDetail = async(dispacth,productId)=>{
     }
 }
 
-export const addProdToCart = async(accessToken, data)=>{
+export const addProdToCart = async(accessToken, data, axiosJWT)=>{
     try {
-        const res = await axios.post(`/shopping/add` , data, {
+        const res = await axiosJWT.post(`/shopping/add` , data, {
             headers:{token: `Bearer ${accessToken}`}
         });
-        return{success:true}
+        return res.data
     } catch (error) {
         return {success:false}
     }

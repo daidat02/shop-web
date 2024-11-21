@@ -37,7 +37,26 @@
   .custom-table .ant-table-tbody > tr > td {
     border-bottom: 0.5px solid #ccc; /* Đặt màu và độ dày cho border-bottom */
   }
-
+  .custom-table .ant-table-placeholder{
+    background: none;
+  }
+  .custom-table  .ant-table-content .ant-table-tbody .ant-table-placeholder{
+    background: none;
+  }
+  .custom-table .ant-table-cell{
+    border: none;
+  }
+  .custom-table .ant-pagination-item{
+    background-color: #1677ff
+  }
+  .custom-table .ant-pagination-item a{
+    color: #fff;
+    font-size: 12px;
+  }
+  .custom-table .css-dev-only-do-not-override-ccdg5a{
+    /* display: none; */
+    background: none;
+  }
  .products-table .footer-table{
     display: flex;
     justify-content: space-between;
@@ -154,4 +173,10 @@
   margin-top: 10px;
   font-size: 10px;
   color: #dadada;
+}
+
+.order-status-display{
+    padding: 10px 15px;
+    border:solid 0.5px #ccc;
+    margin-top: 10px;
 }

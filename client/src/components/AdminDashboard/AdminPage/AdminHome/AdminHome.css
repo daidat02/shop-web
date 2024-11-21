@@ -1,0 +1,139 @@
+.admin-dashboard {
+    padding: 24px;
+    background-color: #f0f2f5;
+    min-height: 100vh;
+  }
+  
+  .dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+  
+  .dashboard-header h1 {
+    margin: 0;
+    color: #1f1f1f;
+    font-size: 24px;
+    font-weight: 600;
+  }
+  
+  .time-range-select {
+    width: 120px;
+  }
+  
+  .stats-cards {
+    margin-bottom: 24px;
+  }
+  
+  .stat-card {
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+    transition: all 0.3s ease;
+  }
+  
+  .stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  }
+  
+  .stat-card.revenue {
+    background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+  }
+  
+  .stat-card.orders {
+    background: linear-gradient(135deg, #52c41a 0%, #389e0d 100%);
+  }
+  
+  .stat-card.customers {
+    background: linear-gradient(135deg, #722ed1 0%, #531dab 100%);
+  }
+  
+  .stat-card.products {
+    background: linear-gradient(135deg, #fa8c16 0%, #d46b08 100%);
+  }
+  
+  .stat-card .ant-statistic-title {
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: 500;
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+  
+  .stat-card .ant-statistic-content {
+    color: white;
+  }
+  
+  .stat-footer {
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 14px;
+  }
+  
+  .growth {
+    display: flex;
+    align-items: center;
+    margin-right: 8px;
+    font-weight: 500;
+  }
+  
+  .growth.positive {
+    color: #52c41a;
+  }
+  
+  .growth.negative {
+    color: #ff4d4f;
+  }
+  
+  .period {
+    color: rgba(255, 255, 255, 0.65);
+  }
+  
+  .charts-section {
+    margin-bottom: 24px;
+  }
+  
+  .charts-section .ant-card {
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+  }
+  
+  .data-section .ant-card {
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+  }
+  
+  .ant-table-thead > tr > th {
+    background: #fafafa;
+    font-weight: 600;
+  }
+  
+  .ant-card-head-title {
+    font-weight: 600;
+    font-size: 16px;
+  }
+  
+  /* Responsive styles */
+  @media (max-width: 992px) {
+    .admin-dashboard {
+      padding: 16px;
+    }
+    
+    .dashboard-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    
+    .time-range-select {
+      width: 100%;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .stats-cards .ant-col {
+      margin-bottom: 16px;
+    }
+  }

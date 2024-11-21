@@ -1,0 +1,245 @@
+.profile-content-container{
+    background: #F5F7FA;
+    padding-bottom: 50px;
+}
+.profile-detail-container{
+    margin: 0 10%;
+}
+.profile{
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    width: 100%;
+    padding: 20px 0;
+
+}
+
+.profile-detail{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 65%;
+    height: 280px;
+    padding: 25px;
+    background: #fff;
+    border: solid 0.5px #ccc;
+    border-radius: 8px;
+}
+.profile-info{
+    padding-bottom: 20px;
+}
+.profile-info-header, .profile-stats{
+    display: flex;
+    align-items: center;
+}
+.profile-info-header{
+    gap:30px;
+    
+}
+.profile-detail .profile-footer
+,.profile-address .profile-footer{
+    padding-top: 30px;
+    border-top: 1px dashed #ccc; /* Đường nét đứt */
+}
+
+.profile-info-header .avatar{
+    width: 120px;
+    height: 120px;
+    padding: 10px;
+}
+.profile-info-container .profile-info-name{
+    font-size: 22px;
+    font-weight: 600;
+    font-family: 'Nunito Sans', sans-serif;
+    margin-bottom: 0px;
+
+}
+.social-icon{
+    padding: 10px 3px;
+    color: #9d9d9d;
+}
+.social-icon:hover{
+    color: #4a90e2;
+}
+.profile-info-container .profile-info-joined{
+    font-size: 13px;
+    font-weight: 400;
+    font-family: 'Nunito Sans', sans-serif;
+    color: #5e5e5e;
+}
+
+.profile-stats {
+    justify-content: space-between;
+}
+.profile-stat .profile-stat-label{
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'Nunito Sans', sans-serif;
+    color: #5e5e5e;
+    padding: 10px 0;
+}
+
+.profile-stat-value{
+    margin-top: 10px;
+    margin-bottom: 0;
+    font-size: 17px;
+}
+
+.profile-address{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: #fff; 
+    padding: 10px 25px;
+    width: 35%;
+    border-radius: 8px;
+    border: solid 0.5px #ccc;
+}
+.address-header{
+    padding: 10px 0;
+    display: flex;
+    border-bottom: 1px dashed #ccc; /* Đường nét đứt */
+    justify-content: space-between;
+}
+.profile-address-content{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.profile-address-title{
+    font-size: 18px;
+    margin: 0;
+}
+
+.profile-address-field{
+    display: flex;
+    justify-content: space-between;
+    padding-top: 10px;
+
+}
+.profile-address-label{
+    font-size: 14px;
+    width: 150px;
+    font-weight: 600;
+    font-family: 'Nunito Sans', sans-serif;
+    color: #5e5e5e;
+}
+
+.profile-address-value{
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Nunito Sans', sans-serif;
+    color: #5e5e5e;
+}
+.profile-contact{
+    padding-bottom: 12px;
+}
+
+/* css user profile tabs */
+
+.user-profile-container {
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 8px;
+  }
+  
+  .profile-form {
+    padding: 20px;
+  }
+  
+  .profile-form .ant-form-item-label {
+    font-weight: 600;
+  }
+  
+  .profile-form .ant-btn-primary {
+    width: 100%;
+    margin-top: 10px;
+  }
+  
+  /* Responsive design */
+  @media (max-width: 576px) {
+    .user-profile-container {
+      width: 95%;
+      padding: 10px;
+    }
+  
+    .profile-form {
+      padding: 10px;
+    }
+  }
+
+  /* css address component */
+
+  .address-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.address-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.address-header h2 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+}
+
+.address-content {
+    background-color: white;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.list-item .address-item {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.list-item .address-item p {
+    margin: 0;
+    color: #666;
+}
+
+.add-address-form {
+    display: grid;
+}
+.address-content .add-address-form .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+.address-action {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+/* Radio Group Styling */
+.ant-radio-wrapper {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #f0f0f0;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    transition: all 0.3s;
+}
+
+.ant-radio-wrapper:hover {
+    border-color: #1890ff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.ant-radio-wrapper-checked {
+    border-color: #1890ff;
+    background-color: #e6f7ff;
+}

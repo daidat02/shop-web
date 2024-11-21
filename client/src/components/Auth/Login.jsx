@@ -19,14 +19,21 @@ const Login = () => {
             password: password,
         };
 
-        const response = await loginUser( dispatch, navigate,newUser);
+        const response = await loginUser( dispatch,newUser);
+        console.log(response)
         if (response.success) {
+            if(response?.user?.role === 'admin'){
+                navigate(`/admin/home`)
+            }else{
+                navigate(`/`)
+            }
             NotificationMessage.success("Đăng nhập thành công!");
+
         } else {
             NotificationMessage.error("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin đăng nhập.");
         }
     };
-
+    
     return (
         <div className="login-page">
             <div className="login-img"><img src="/images/login_img.jpeg" alt="" /></div>
@@ -57,7 +64,7 @@ const Login = () => {
                             />
                         </div>
                         <p className="forgot-password">
-                        <Link to="/forgot-password">Quên mật khẩu?</Link>
+                        <Link to="/reset-pass">Quên mật khẩu?</Link>
                          </p>
                         <button type="submit" className="login-button">Đăng nhập</button>
                     </form>

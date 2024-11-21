@@ -28,7 +28,6 @@ const addProductToShoppingCart = async (req, res) => {
                 if (cart.items[itemIndex].quantity > 99) {
                     cart.items[itemIndex].quantity = 99; // Giới hạn số lượng không vượt quá 99
                 }
-
                 // Cập nhật lại giá tổng
                 cart.items[itemIndex].priceTotal = productInstance.price * cart.items[itemIndex].quantity; 
             } else {
@@ -45,7 +44,10 @@ const addProductToShoppingCart = async (req, res) => {
 
             // Lưu giỏ hàng
             await cart.save();
-            res.status(STATUS.OK).json({ message: 'Sản phẩm đã được thêm vào giỏ hàng', cart });
+            res.status(STATUS.OK).json({            
+                success:true,
+                message: 'Sản phẩm đã được thêm vào giỏ hàng',
+                data: cart });
         } else {
             // Nếu không có giỏ hàng, tạo mới
             const newCart = new DB_Connection.ShoppingCart({
@@ -58,10 +60,15 @@ const addProductToShoppingCart = async (req, res) => {
                 count: 1 // Khởi tạo số lượng items
             });
             await newCart.save();
-            res.status(STATUS.CREATED).json({ message: 'Giỏ hàng đã được tạo và sản phẩm đã được thêm vào', newCart });
+            res.status(STATUS.CREATED).json({ 
+                success:true,
+                message: 'Giỏ hàng đã được tạo và sản phẩm đã được thêm vào',
+                data: newCart
+             });
         }
     } catch (error) {
         res.status(STATUS.SERVER_ERROR).json({
+            success:false,
             message: error.name,
             error: error.message
         });
@@ -99,14 +106,20 @@ const removeItemCart = async (req, res) => {
             { $pull: { items: { _id: new ObjectId(itemId) } } }, // Xóa item theo ID
             { new: true } // Trả về giỏ hàng mới sau khi xóa
         );
-
+        
         if (cart) {
-            res.status(STATUS.OK).json({ message: 'Sản phẩm đã được xóa khỏi giỏ hàng', cart });
+            cart.count = cart.items.length;
+            res.status(STATUS.OK).json({
+                success:true,
+                message: 'Sản phẩm đã được xóa khỏi giỏ hàng',
+                data: cart 
+            });
         } else {
             res.status(STATUS.NOT_FOUND).json({ message: 'Không tìm thấy giỏ hàng hoặc sản phẩm' });
         }
     } catch (error) {
         res.status(STATUS.SERVER_ERROR).json({
+            success:false,
             message: error.name,
             error: error.message
         });

@@ -165,13 +165,12 @@ const getMyOrders = async(req,res)=>{
         const orders = await DB_Connection.Order.find({
             user:new ObjectId(user.id),
         }).populate({
-            path:'user',
-            path:'items',
-            populate:{
-                path:'product'
-            }
+            path:'user'
         })
-        res.status(STATUS.OK).json(orders);
+        res.status(STATUS.OK).json({
+            success:true,
+            data:orders
+        });
     } catch (error) {
         res.status(STATUS.SERVER_ERROR).json({
             message: error.name,

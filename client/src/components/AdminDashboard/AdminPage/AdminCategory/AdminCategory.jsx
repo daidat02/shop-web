@@ -120,7 +120,7 @@ function AdminCategory() {
       ),
     },
     {
-      title: 'Category Name',
+      title: 'Tên Danh Mục',
       dataIndex: 'category_name',
       key: 'category_name',
       width: '300px',
@@ -128,7 +128,7 @@ function AdminCategory() {
       sorter: (a, b) => a.category_name.localeCompare(b.category_name),
     },
     {
-      title: 'State',
+      title: 'Trạng Thái',
       dataIndex: 'state',
       key: 'state',
       width: '200px',
@@ -141,7 +141,7 @@ function AdminCategory() {
       ),
     },
     {
-      title: 'Action',
+      title: 'Hành Động',
       key: 'action',
       render: (_, record) => (
         <Space size="middle">
@@ -159,19 +159,19 @@ function AdminCategory() {
   return (
     <div className='content-container'>
       <Breadcrumb style={{ margin: '25px 50px' }}>
-        <Breadcrumb.Item><a>Admin</a></Breadcrumb.Item>
-        <Breadcrumb.Item>Products</Breadcrumb.Item>
+        <Breadcrumb.Item><a>Trang chủ</a></Breadcrumb.Item>
+        <Breadcrumb.Item>Danh Mục</Breadcrumb.Item>
       </Breadcrumb>
 
       <div className='title-container'>
-        <h1 className='content-title'>Categories</h1>
+        <h1 className='content-title'>Danh Mục</h1>
       </div>
 
       <div className='action-nav'>
         <div className='admin-search'>
           <Input
             prefix={<SearchOutlined style={{ color: '#8a94ad' }} />}
-            placeholder="Search Categories"
+            placeholder="Tìm danh mục "
             size="middle"
             style={{
               width: 300,
@@ -183,7 +183,7 @@ function AdminCategory() {
         <div className='btn-filters'>
           <div className="filter-item">
             <Select
-              defaultValue="Category"
+              defaultValue="Danh Mục"
               style={{ width: 120 }}
             >
               {categories?.map((category) => (
@@ -194,9 +194,7 @@ function AdminCategory() {
         </div>
 
         <div className='btn-action'>
-          <Button className='btn-exprot' style={{ background: 'none' }}>
-            <ExportOutlined /> Export
-          </Button>
+
 
           <Button
             type="primary"
@@ -204,7 +202,7 @@ function AdminCategory() {
             onClick={showDrawer}
             style={{ fontSize: 10 }}
           >
-            Add Category
+            Thêm Danh Mục
           </Button>
         </div>
       </div>
@@ -220,7 +218,7 @@ function AdminCategory() {
       </div>
 
       <Drawer
-        title="Create New Category"
+        title="Thêm Danh Mục"
         width={420}
         onClose={onClose}
         open={open}

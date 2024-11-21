@@ -8,12 +8,15 @@ import NotificationMessage from '../../../Message/NotificationMessage';
 import RichTextEditor from '../../Description/Description';
 import { getCategories } from '../../../../api/API_Category';
 import { getBrand } from '../../../../api/API_Brand';
+import { useNavigate } from 'react-router-dom';
+import LoadingOverlay from '../../../CustomerDashboard/ActionComponents/LoadingOverlay';
 
 const { Dragger } = Upload;
 const { Option } = Select;
 
 const CreateProduct = ({ categoryId }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
   const [imageUrls, setImageUrls] = useState([]);
@@ -32,7 +35,10 @@ const CreateProduct = ({ categoryId }) => {
     brand: '',
     collection: '',
     tags: [],
+    discountPercentage:'',
   });
+
+  const [isLoading,setIsLoading] = useState(false);
   useEffect(() => {
     const fetchApi= async () => {
         try {
@@ -52,12 +58,15 @@ const CreateProduct = ({ categoryId }) => {
 }, []);
 
 const handleUpload = async (file) => {
+  setIsLoading(true)
   try {
     const urls = await uploadImages(file); // Gọi API upload ảnh
     setImageUrls((prevUrls) => [...prevUrls, ...urls]); // Lưu URL ảnh
     NotificationMessage.success('Upload ảnh thành công!');
   } catch (error) {
     NotificationMessage.error('Upload ảnh thất bại!');
+  }finally{
+    setIsLoading(false)
   }
 };
 
@@ -77,23 +86,21 @@ const uploadProps = {
 };
 
 const onFinish = async () => {
+  setIsLoading(true)
   if (imageUrls.length === 0) {
     NotificationMessage.error('Ảnh chưa được tải lên!');
-    return;
+    return setIsLoading(false);
   }
-
   const productDataToSubmit = {
     ...productData,
     images: imageUrls.map(url => ({ url })),
     tags: productData.tags.map(tag => ({ tag })),
   };
-
   try {
     const result = await createProduct(dispatch, productDataToSubmit);
     if (result.success) {
       NotificationMessage.success('Tạo sản phẩm thành công!');
       form.resetFields();
-      
       // Resetting state values
       setFileList([]);
       setImageUrls([]);
@@ -108,6 +115,7 @@ const onFinish = async () => {
         brand: '',
         collection: '',
         tags: [],
+        discountPercentage:''
       });
       setVariants([]);
       setAvailableOptions([]);
@@ -117,6 +125,9 @@ const onFinish = async () => {
     }
   } catch (error) {
     NotificationMessage.error('Lỗi khi tạo sản phẩm. Vui lòng thử lại.');
+  }finally{
+    setIsLoading(false)
+    navigate('/admin/products');
   }
 };
 
@@ -154,16 +165,17 @@ const onFinish = async () => {
   
   return (
     <div className='content-container'>
+      <LoadingOverlay isLoading={isLoading}/>
       <Breadcrumb style={{ margin: '25px 50px' }}>
-        <Breadcrumb.Item><a>Products</a></Breadcrumb.Item>
-        <Breadcrumb.Item>Add product</Breadcrumb.Item>
+        <Breadcrumb.Item><a>Sản Phẩm</a></Breadcrumb.Item>
+        <Breadcrumb.Item>Thêm Sản Phẩm</Breadcrumb.Item>
       </Breadcrumb>
 
       <div className='title-container'>
-        <h1 className='content-title'>Add a product</h1>
+        <h1 className='content-title'>Thêm Sản Phẩm</h1>
         <div className='btn-action'>
           <Button className='btn-exprot' style={{ background: 'none' }}>
-            <ClearOutlined /> Discard
+            <ClearOutlined /> Xóa Dữ Liệu
           </Button>
 
           <Button
@@ -173,58 +185,57 @@ const onFinish = async () => {
             style={{ fontSize: 13 }}
             onClick={onFinish} // Gọi hàm onFinish khi bấm nút
           >
-            Publish product
+            Thêm Sản Phẩm
           </Button>
         </div>
       </div>
 
       <div className='create-container'>
         <div className='create-form'>
-          <h3 className='input-title'>Product Title</h3>
+          <h3 className='input-title'>Tên Sản Phẩm</h3>
           <Input style={{ padding: '7px 0' }} 
             onChange={(e) => handleInputChange('product_name', e.target.value)} 
           />
-          <h3 className='input-title'>Product Description</h3>
+          <h3 className='input-title'>Giới Thiệu</h3>
           <RichTextEditor 
             onChange={(value) => handleInputChange('description', value)} 
           />
 
-          <h3 className='input-title'>Display Images</h3>
+          <h3 className='input-title'>Hình Ảnh</h3>
           <div className='upload-container'>
             <Dragger {...uploadProps}>
               <p className="ant-upload-drag-icon">
                 <UploadOutlined />
               </p>
-              <p className="ant-upload-text">Click or drag file to this area to upload</p>
+              <p className="ant-upload-text">Nhấp Hoặc Kéo Vào Khung Để Thêm ảnh</p>
               <p className="ant-upload-hint">
-                Support for a single or bulk upload. Strictly prohibited from uploading company data or other
-                banned files.
+                Hỗ trợ tải lên một lần hoặc hàng loạt. 
               </p>
             </Dragger>
           </div>
-          <h3 className='input-title'>Inventory</h3>
+          <h3 className='input-title'>Chi tiết</h3>
           <div className='pricing-container'>
-            <span>Pricing</span>
+            <span>Định Giá</span>
             <div className='pricing-content'>
               <div>
-                <h4 className='input-title'>Regular price</h4>
+                <h4 className='input-title'>Giá Thông Thường</h4>
                 <Input placeholder='$$$' style={{ width: 200, padding: '8px 5px', margin: 0 }} 
                   onChange={(e) => handleInputChange('price', e.target.value)} 
                 />
               </div>
               <div>
-                <h4 className='input-title'>Sale price</h4>
+                <h4 className='input-title'>Giá Đã Giảm</h4>
                 <Input placeholder='$$$' style={{ width: 200, padding: '8px 5px', margin: 0 }}
-                  onChange={(e) => handleInputChange('salePrice', e.target.value)}        
+                  onChange={(e) => handleInputChange('discountPercentage', e.target.value)}        
                 />
               </div>
             </div>
           </div>
           <div className='pricing-container'>
-            <span>Restock</span>
+            <span>Kho</span>
             <div className='pricing-content'>
               <div>
-                <h4 className='input-title'>Add to Stock</h4>
+                <h4 className='input-title'>Nhập Hàng</h4>
                 <Input placeholder='$$$' type='number' style={{ width: 200, padding: '8px 5px', margin: 0 }}
                   onChange={(e) => handleInputChange('quantity', e.target.value)} 
                 />
@@ -233,10 +244,10 @@ const onFinish = async () => {
           </div>
 
           <div className='pricing-container'>
-            <span>Product Type</span>
+            <span>Loại Sản Phẩm</span>
             <div className='pricing-content'>
               <div>
-                <h4 className='input-title'>Type</h4>
+                <h4 className='input-title'>Loại</h4>
                 <Input placeholder='$$$'  style={{ width: 200, padding: '8px 5px', margin: 0 }}
                   onChange={(e) => handleInputChange('productType', e.target.value)} 
                 />
@@ -248,9 +259,9 @@ const onFinish = async () => {
 
         <div className='select-container'>
           <div className='select-form'>
-            <h2>Organize</h2>
+            <h2>Thành Phần</h2>
             <div className='select-item'>
-              <span>Category <a href="">Add new category</a></span>
+              <span>Danh Mục <a href="">Thêm Danh Mục</a></span>
               <Select placeholder="Category"
                 onChange={(value) => handleInputChange('category', value)}
               >
@@ -261,7 +272,7 @@ const onFinish = async () => {
             </div>
 
             <div className='select-item'>
-              <span>Brand <a href="">Add new Brand</a></span>
+              <span>Nhãn Hàng <a href="">Thêm Nhãn Hàng</a></span>
               <Select placeholder="Brand"
                 onChange={(value) => handleInputChange('brand', value)}
               >
@@ -273,7 +284,7 @@ const onFinish = async () => {
             </div>
 
             <div className='select-item'>
-              <span>Collection</span>
+              <span>Bộ Siêu Tập</span>
               <Select placeholder="Collection"
                 onChange={(value) => handleInputChange('collection', value)}
               >
@@ -283,7 +294,7 @@ const onFinish = async () => {
               </Select>
             </div>
             <div className='select-item'>
-              <span>Tags <a href="">Add new Tag</a></span>
+              <span>Thẻ <a href="">Thêm Thẻ </a></span>
               <Select mode="multiple" placeholder="Tags"
                 onChange={(value) => handleInputChange('tags', value)}
               >
@@ -298,17 +309,17 @@ const onFinish = async () => {
 
 
            <div className='select-form'>
-              <h2>Variants</h2>
+              <h2>Tùy Chọn</h2>
               {variants.map((variant, index) => (
                 <div key={variant.id} className="variant-item">
-                 <span>{variant.name} <a href="">remove</a></span>
+                 <span>{variant.name} <a href="">Xóa</a></span>
 
                   <Select
                     placeholder='Select Type'
                     onChange={(value) => handleVariantChange(index, value)}
                   >
-                    <Option value="size">Size</Option>
-                    <Option value="color">Color</Option>
+                    <Option value="size">Kích Thước</Option>
+                    <Option value="color">Màu Sắc</Option>
                   </Select>
                   
                   <Select
@@ -331,7 +342,7 @@ const onFinish = async () => {
                 onClick={handleAddVariant}
                 style={{ width: '100%', marginTop: '16px' }}
               >
-                <PlusOutlined /> Add new option
+                <PlusOutlined /> Thêm Tùy Chọn
               </Button>
             </div>
         </div>

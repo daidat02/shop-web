@@ -1,8 +1,9 @@
-import { createRandomID, STATUS } from '../configs/Constants.js'; 
+import { createRandomID, generateID, STATUS } from '../configs/Constants.js'; 
 import DB_Connection from '../model/DBConnection.js'; 
 import mongoose from 'mongoose';
 import transporter from '../configs/OTP_Config.js';
-
+import crypto from 'crypto';
+import bcrypt from 'bcrypt'
 
 const sendInfoOrder = async (req, res) => {
     const { email, order_id } = req.body;
@@ -169,7 +170,120 @@ const sendInfoOrder = async (req, res) => {
     }
 };
 
+const resetPassword = async (req, res) => {
+    const { email } = req.body;
+    
+    try {
+        const account = await DB_Connection.Account.findOne({ email });
+        
+        if (!account) { 
+            return res.status(STATUS.NOT_FOUND).json({
+                success: false,
+                message: 'Không tìm thấy tài khoản với email này!'
+            });
+        }
+        const token = crypto.randomBytes(20).toString('hex'); // Sinh token ngẫu nhiên
+        // Lưu token vào cơ sở dữ liệu để xác thực
+        account.resetPasswordToken = token;
+        account.resetPasswordExpires = Date.now() + 3600000; // Token hết hạn sau 1 giờ
+        await account.save();
+
+        const mailOptions = {
+            from: "daidat1202@gmail.com",
+            to: email,
+            subject: 'Đặt lại mật khẩu',
+            html: `
+                <html>
+                    <body>
+                        <div style="text-align:center;">
+                            <h2>Yêu cầu đặt lại mật khẩu</h2>
+                            <p>Nhấn vào nút bên dưới để tạo mật khẩu mới:</p>
+                            <a href="${process.env.FRONTEND_URL}/return-pass?token=${token}" 
+                             style="background-color:#4CAF50;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;">
+                                Tạo mật khẩu mới
+                            </a>
+                        </div>
+                    </body>
+                </html>
+            `
+        };
+
+        await transporter.sendMail(mailOptions);
+
+        return res.status(STATUS.OK).json({
+            success: true,
+            message: 'Liên kết đặt lại mật khẩu đã được gửi tới email của bạn.'
+        });
+        
+    } catch (error) {
+        return res.status(STATUS.SERVER_ERROR).json({ 
+            success: false,
+            error: error.message 
+        });
+    }
+};
+
+const generateNewPassword = async (req, res) => {
+    const { token } = req.query; // Nhận token từ URL
+
+    try {
+        // Tìm tài khoản với token hợp lệ
+        const account = await DB_Connection.Account.findOne({
+            resetPasswordToken: token,
+            resetPasswordExpires: { $gt: Date.now() } // Kiểm tra token còn hiệu lực
+        });
+
+        if (!account) {
+            return res.status(401).json({
+                success: false,
+                message: 'Token không hợp lệ hoặc đã hết hạn!'
+            });
+        }
+
+        // Tạo và mã hóa mật khẩu mới
+        const newPassword = generateID(6);
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        // Cập nhật mật khẩu mới
+        account.password = hashedPassword;
+        account.resetPasswordToken = undefined; // Xóa token sau khi sử dụng
+        account.resetPasswordExpires = undefined;
+        await account.save();
+
+        // Gửi mật khẩu mới qua email
+        const mailOptions = {
+            from: "daidat1202@gmail.com",
+            to: account.email,
+            subject: 'Mật khẩu mới của bạn',
+            html: `
+                <html>
+                    <body>
+                        <div style="text-align:center;">
+                            <h2>Mật khẩu mới</h2>
+                            <p>Mật khẩu mới của bạn là: <b>${newPassword}</b></p>
+                            <p>Vui lòng đổi mật khẩu sau khi đăng nhập.</p>
+                        </div>
+                    </body>
+                </html>
+            `
+        };
+
+        await transporter.sendMail(mailOptions);
+
+        return res.status(STATUS.OK).json({
+            success: true,
+            message: 'Mật khẩu mới đã được gửi tới email của bạn.'
+        });
+
+    } catch (error) {
+        return res.status(STATUS.SERVER_ERROR).json({ 
+            success: false, 
+            error: error.message 
+        });
+    }
+};
+
 
 export{
-    sendInfoOrder
+    sendInfoOrder,resetPassword, generateNewPassword
 }

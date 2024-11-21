@@ -1,4 +1,4 @@
-import { createRandomID, STATUS } from '../configs/Constants.js'; 
+import { createRandomID, generateID, STATUS } from '../configs/Constants.js'; 
 import DB_Connection from '../model/DBConnection.js'; 
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt'
@@ -6,6 +6,7 @@ import jwt from 'jsonwebtoken';
 import transporter from '../configs/OTP_Config.js';
 
 const ObjectId = mongoose.Types.ObjectId;
+let refreshTokens = [];
 
 function generateOTP(length = 6) {
     let otp = '';
@@ -104,7 +105,6 @@ const sendOTP = async (req, res) => {
             `
         };
 
-
         const newOTP = new DB_Connection.OTP({
             email,
             otp
@@ -173,15 +173,40 @@ const generateAccessToken =  async (user)=>{
    process.env.JWT_ACCESS_KEY,
    {expiresIn: "1h"})
 }
+const generateNewAccessToken =  async (user)=>{
+    return jwt.sign({
+     id: user.id,
+     role:user.role
+    },
+    process.env.JWT_ACCESS_KEY,
+    {expiresIn: "1h"})
+ }
+ 
 
-const generateRefressToken =  async (user)=>{
+const generateRefreshToken =  async (user)=>{
     return jwt.sign({
      id: user._id,
      role:user.role
     },
     process.env.JWT_REFRESS_KEY,
-    {expiresIn: "1h"})
+    {expiresIn: "365d"})
 }
+
+const generateNewRefreshToken =  async (user)=>{
+    return jwt.sign({
+     id: user.id,
+     role:user.role
+    },
+    process.env.JWT_REFRESS_KEY,
+    {expiresIn: "365d"})
+}
+
+const createTokens = async (user) => {
+    const accessToken = await generateAccessToken(user);
+    const refreshToken = await generateRefreshToken(user);
+    refreshTokens.push(refreshToken);
+    return { accessToken, refreshToken };
+};
 
 const loginUser = async (req,res)=>{
     const {email, password} = req.body
@@ -198,21 +223,83 @@ const loginUser = async (req,res)=>{
             return res.status(STATUS.NOT_FOUND).json({message: 'Mật khẩu không đúng'});
         }
         if(account && validPassword){
-            const accessToken= await generateAccessToken(account.user);
-
-            const {password,...orther}= account._doc;
-            const user = account.user._doc;
-            res.status(STATUS.OK).json({...orther,user,accessToken});      
-            console.log(user)      
+                const { accessToken, refreshToken } = await createTokens(account.user);
+                // refreshTokens.push(refreshToken);
+                res.cookie("refreshToken", refreshToken,{
+                    httpOnly: true,
+                    secure: false,
+                    path:'/',
+                    sameSite:'strict',
+                })
+            // const {password,...orther}= account._doc;
+            // const user = account.user._doc;
+            return res.status(STATUS.OK).json({
+                success:true,
+                user:account.user,accessToken
+            });      
         }
     } catch (error) {
         res.status(STATUS.SERVER_ERROR).json({message: error.message});
-
     }
+}
+
+const refressToken = async (req,res)=>{
+    const refreshToken = req.cookies.refreshToken; // Refresh Token từ cookie
+    if (!refreshToken) return res.status(401).send('No refresh token provided');
+    // if (!refreshTokens.includes(refreshToken)) {
+    //     return res.status(403).json({
+    //         message:"Refresh token is not valid " ,
+    //         data:refreshToken
+    //     });
+    // }
+    try {
+        jwt.verify(refreshToken, process.env.JWT_REFRESS_KEY, async (err, user) => {
+            if (err) {
+                console.log(err);
+                return res.status(403).json({
+                    message:"Refresh token is not valid " ,
+                });
+            }
+            
+            // refreshTokens = refreshTokens.filter((token) => token !== refreshToken);
+
+            try {
+                const newAccessToken = await generateNewAccessToken(user);
+                const newRefreshToken = await generateNewRefreshToken(user);
+                
+                // refreshTokens.push(newRefreshToken);
+
+                res.cookie("refreshToken", newRefreshToken, {
+                    httpOnly: true,
+                    secure: false,
+                    path: '/',
+                    sameSite: "strict",
+                });
+                
+                console.log('New Access Token:', newRefreshToken);
+                res.status(200).json({
+                    accessToken: newAccessToken  
+                });
+            } catch (error) {
+                console.log(error);
+                res.status(500).json("Lỗi trong quá trình tạo Access Token");
+            }
+        });
+    } catch (err) {
+        console.log(err);
+        res.status(401 ).json("Refresh token không hợp lệ");
+    }
+}
+
+const logoutUser = async(req,res)=>{
+    res.clearCookie('refreshToken');
+    refreshTokens = refreshTokens.filter(token => token !== req.cookies.refreshToken);
+    res.status(STATUS.OK).json({
+        success:true,
+        message:'Đăng xuát thành công'
+    });
 }
 
 
 
-
-// Xuất hàm registerAccount
-export { registerAccount , generateAccessToken , generateRefressToken, loginUser ,sendOTP , checkOTP};
+export { registerAccount , loginUser ,sendOTP , checkOTP ,refressToken,logoutUser};

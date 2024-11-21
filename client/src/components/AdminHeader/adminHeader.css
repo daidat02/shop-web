@@ -1,0 +1,25 @@
+.admin-header-content{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.admin-action-container{
+    display: flex;
+    align-items: center;
+    gap:15px;
+}
+
+.admin-action-container .bell{
+    padding-top:8px ;
+}
+.admin-action-container .admin-info{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.admin-action-container .admin-info .admin-name {
+    font-size: 14px;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 800
+}

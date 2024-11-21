@@ -7,13 +7,17 @@ import { addProdToCart, getProductDetail } from '../../../api/API_Product';
 import NotificationMessage from '../../Message/NotificationMessage';
 import QuantityControl from './QuantityControl';
 import './productdetail.css';
+import { createAxiosInstance } from '../../../createInstance';
+import ProductReviews from './ProductReviews';
 
 const ProductDetail = () => {
     const { productId } = useParams();
     const dispatch = useDispatch();
     const { account } = useSelector((state) => state.auth || {});
     const initialProdDetail = useSelector((state) => state.products.productDetail);
-    
+    const cartItemCount = useSelector((state)=>state.cart?.countItems|| 0);
+    let axiosJWT = createAxiosInstance(account,dispatch);;
+
     const [product, setProduct] = useState(initialProdDetail);
     const [quantity, setQuantity] = useState(1);
     const [isLoading, setIsLoading] = useState(true);
@@ -62,9 +66,10 @@ const ProductDetail = () => {
                 quantity
             };
             console.log(addData)
-            const result = await addProdToCart(account.accessToken, addData);
+            const result = await addProdToCart(account.accessToken, addData,axiosJWT);
 
             if (result.success) {
+                dispatch({ type: 'cart/setCountItems', payload: result.data?.count });
                 NotificationMessage.success('Thêm sản phẩm thành công!');
             } else {
                 NotificationMessage.error('Thêm sản phẩm thất bại!', result.error);
@@ -149,14 +154,14 @@ const ProductDetail = () => {
                         </div>
                         <div className="price-container">
                            <span className='product-price'>
-                            {product?.price.toLocaleString()}đ
+                            {product?.sale_price.toLocaleString()}đ
                            </span>
 
                            <span className='sale-price'>
                             {product?.price.toLocaleString()}đ
                            </span>
 
-                           <span className='discount-percent'>10% off</span>
+                           <span className='discount-percent'>{product?.discountPercentage}%</span>
                         </div>
 
                         {/* <div className="product-description">
@@ -209,6 +214,7 @@ const ProductDetail = () => {
                     </div>
                 </div>
             </div>
+
         </div>
     );
 };

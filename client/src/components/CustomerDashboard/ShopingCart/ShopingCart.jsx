@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Trash2, ShoppingCart as CartIcon } from 'lucide-react';
-import { Space, Table, Input, Button, Card } from 'antd';
+import { Trash2, ShoppingCart as CartIcon, Flag } from 'lucide-react';
+import { Table, Button, Card } from 'antd';
 import QuantityControl from '../ProductDetail/QuantityControl';
 import './cart.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { getCart } from '../../../api/API_Cart';
+import { getCart, removeCartItem } from '../../../api/API_Cart';
+import NotificationMessage from '../../Message/NotificationMessage';
 import LoadingOverlay from '../ActionComponents/LoadingOverlay';
+import getAxiosInstance, { createAxiosInstance } from '../../../createInstance';
 
 // Hàm định dạng giá
 const formatPrice = (price) => {
@@ -18,18 +20,23 @@ const ShoppingCart = () => {
   const account = useSelector((state) => state.auth?.account);
   const accessToken = account?.accessToken;
   const initialCart = useSelector((state) => state.cart?.cart);
+
   const [cartItems, setCartItems] = useState([]);
   const [checkedItems, setCheckedItems] = useState([]);
   const [checkAll, setCheckAll] = useState(false);
   const [shippingAddress, setShippingAddress] = useState("");
-
+  const [isLoading,setIsLoading] = useState(false)
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const axiosJWT = createAxiosInstance(account,dispatch);
+  const fetchApi = async ()=>{
+    const response= await getCart(accessToken, dispatch,axiosJWT);
 
+  }
   useEffect(() => {
-    getCart(accessToken, dispatch);
     setCheckedItems([]);
+    fetchApi();
   }, [accessToken, dispatch]);
 
   useEffect(() => {
@@ -48,26 +55,23 @@ const ShoppingCart = () => {
     );
   };
 
-  const handleRemoveItem = (productId) => {
-    setCartItems(prevItems => prevItems.filter(item => item?.product && item.product._id !== productId));
-    setCheckedItems(prevChecked => prevChecked.filter(id => id !== productId));
-  };
-
-  const handleCheckItem = (productId) => {
-    setCheckedItems(prevChecked =>
-      prevChecked.includes(productId)
-        ? prevChecked.filter(id => id !== productId)
-        : [...prevChecked, productId]
-    );
-  };
-
-  const handleCheckAll = () => {
-    if (checkAll) {
-      setCheckedItems([]);
-    } else {
-      setCheckedItems(cartItems?.map(item => item?.product?._id).filter(Boolean));
+  const handleRemoveItem = async (itemId) => {
+    setIsLoading(true);
+    try {
+      const response = await removeCartItem(accessToken,itemId,axiosJWT)
+      if(response.success){
+        NotificationMessage.success(response.message);
+        dispatch({ type: 'cart/setCountItems', payload: response.data?.count });
+        fetchApi();
+        setCartItems(initialCart[0]?.items || []); // Đảm bảo cartItems là mảng
+      }else{
+        NotificationMessage.error(response.message);
+      }
+    } catch (error) {
+      NotificationMessage.error(error.response.error.message);
+    }finally{
+      setIsLoading(false)
     }
-    setCheckAll(!checkAll);
   };
 
   useEffect(() => {
@@ -166,7 +170,7 @@ const ShoppingCart = () => {
         <Button 
           type="link" 
           icon={<Trash2 />} 
-          onClick={() => handleRemoveItem(record.product._id)}
+          onClick={() => handleRemoveItem(record._id)}
         />
       ),
       align: 'center'
@@ -176,14 +180,14 @@ const ShoppingCart = () => {
 
   return (
     <div className="cart-container">
-      
+      <LoadingOverlay isLoading={isLoading}/>
       <div className="cart-header">
         <h2>
           <CartIcon size={32} />
           Giỏ Hàng
         </h2>
       </div>
-
+    
       <div className='cart-content'>
         <Card className='cart-table'>
           <Table
@@ -197,6 +201,7 @@ const ShoppingCart = () => {
             rowKey={record => record.product._id} // Thêm rowKey để đảm bảo mỗi hàng có một key duy nhất
           />
         </Card>
+
         <div className='cart-bill'>
           <h3>Thông tin thanh toán</h3>
           <div className='billing-details'>
@@ -217,9 +222,11 @@ const ShoppingCart = () => {
               <span className='billing-value'>{formatPrice(totalPrice)}</span>
             </div>
           </div>
-          <Button type="primary" onClick={handleOrderSubmit} className="order-button">
-            Đặt hàng
-          </Button>
+         <div className="order-button">
+          <Button type="primary" onClick={handleOrderSubmit} >
+              Đặt hàng
+            </Button>
+         </div>
         </div>
       </div>
     </div>

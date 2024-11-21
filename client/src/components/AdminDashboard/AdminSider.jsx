@@ -10,7 +10,8 @@ import {
   SettingOutlined,
   LogoutOutlined,
   FormOutlined,
-  ProductOutlined
+  ProductOutlined,
+  MessageOutlined
 } from '@ant-design/icons';
 import { Menu, Layout } from 'antd';
 
@@ -20,33 +21,38 @@ const items = [
   {
     key: '/admin/home',
     icon: <HomeOutlined />,
-    label: 'Home',
+    label: 'Trang chủ',
+  },
+  {
+    key: '/admin/chat',
+    icon: <MessageOutlined />,
+    label: 'Nhắn Tin',
   },
   {
     key: '/admin/category',
     icon: <AppstoreOutlined />,
-    label: 'Categories ',
+    label: 'Danh Mục ',
   },
   {
     key: '/admin/products',
     icon: <ProductOutlined />,
-    label: 'Products',
+    label: 'Sản Phẩm',
   },
   
   {
     key: '/admin/orders',
     icon: <ShoppingCartOutlined />,
-    label: 'Orders',
+    label: 'Đơn Hàng',
   },
   {
     key: '/admin/discounts',
     icon: <GiftOutlined />,
-    label: 'Discount',
+    label: 'Khuyến Mãi',
   },
   {
     key: '/admin/customers',
     icon: <TeamOutlined />,
-    label: 'Customers',
+    label: 'Khách Hàng',
   },
   // {
   //   key: 'manage',
@@ -65,23 +71,7 @@ const items = [
   //     },
   //   ],
   // },
-  {
-    key: 'user',
-    icon: <SettingOutlined />,
-    label: 'Account',
-    children: [
-      {
-        key: '/admin/me',
-        icon: <UserOutlined />,
-        label: 'Thông tin tài khoản',
-      },
-      {
-        key: '/admin/logout',
-        icon: <LogoutOutlined />,
-        label: 'Đăng xuất',
-      },
-    ],
-  },
+  
 ];
 
 const AdminSider = ({ onCreateCategoryClick }) => { // Nhận hàm từ props

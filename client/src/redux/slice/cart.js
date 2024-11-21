@@ -4,23 +4,27 @@ const cartSlice = createSlice({
     name:'cart',
     initialState:{
         cart:null,
-        success:true
+        success:true,
+        countItems:0,
     },
 
     reducers:{
         getCartSucsess:(state,action)=>{
             state.cart = action.payload
         },
-
         addProductToCartSuccess:(state)=>{
             state.success= true
+        },
+        setCountItems:(state,action)=>{
+            state.countItems=action.payload
         },
     }
 });
 
 export const{
     getCartSucsess,
-    addProductToCartSuccess
+    addProductToCartSuccess,
+    setCountItems
 } = cartSlice.actions
 
 export default cartSlice.reducer

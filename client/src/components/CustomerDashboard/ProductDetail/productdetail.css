@@ -1,5 +1,6 @@
 .product-detail-container {
     min-height: 100vh;
+    background: #fff;
 }
 
 .product-detail {
@@ -125,6 +126,11 @@
     color: #fff;
     border-radius: 30px;
 
+}
+.product-info .price-container{
+    display: flex;
+    gap: 10px;
+    align-items: center;
 }
 .product-info .price-container .product-price {
     font-size: 38px;

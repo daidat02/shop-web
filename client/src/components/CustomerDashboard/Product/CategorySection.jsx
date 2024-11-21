@@ -12,7 +12,7 @@ const CategorySection = ({ title, products, type, layout }) => {
     const scrollLeft = () => {
         scrollRef.current.scrollBy({ left: -256, behavior: 'smooth' });
     };
-
+    
     const scrollRight = () => {
         scrollRef.current.scrollBy({ left: 256, behavior: 'smooth' });
     };

@@ -22,7 +22,14 @@ const AccountSchema = new mongoose.Schema({
         type: Boolean,
         required:true,
         default:true
+    },
+    resetPasswordToken :{
+        type: String,
+    },
+    resetPasswordExpires:{
+        type: Date
     }
+
 });
 
 const Account = mongoose.model(DB_SCHEMA.ACCOUNT, AccountSchema);

@@ -3,7 +3,7 @@ import { Tag,Input,Modal,Radio,message,Button, Result} from 'antd';
 import {Loading3QuartersOutlined} from '@ant-design/icons'; // Import icon loading
 import { useLocation, useNavigate ,Link} from 'react-router-dom';
 import Voucher from './Voucher';
-import { getShippingAddress } from '../../../api/API_User';
+import { addAddress, getShippingAddress, updateAddressDefault } from '../../../api/API_User';
 import { getVoucher } from '../../../api/API_Voucher';
 import { useDispatch, useSelector } from 'react-redux';
 import './order.css';
@@ -14,6 +14,8 @@ import OtpInput from '../../Auth/otpInput';
 import { sendOTP } from '../../../api/API_Auth';
 import { sendInfoOrder } from '../../../api/API_SendEmail';
 import LoadingOverlay from '../ActionComponents/LoadingOverlay';
+import { createAxiosInstance } from '../../../createInstance';
+import AddressComponent from '../Profile/AddressComponent';
 
 const CheckoutPage = () => {
   const initialAccount = useSelector((state)=> state.auth?.account)
@@ -22,6 +24,7 @@ const CheckoutPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const axiosJWT = createAxiosInstance(initialAccount,dispatch);
   const { items, totalPrice } = location.state || {};
   const [selectedPayment, setSelectedPayment] = useState("cash_on_delivery");
   const [addressData, setAddressData] = useState([]);
@@ -35,7 +38,7 @@ const CheckoutPage = () => {
     { key: 'cash_on_delivery', label: 'Thanh Toán Khi Nhận Hàng' },
     { key: 'vnpay', label: 'VNPay' },
     { key: 'paypal', label: 'PayPal' }
-];
+  ];
   
   const [isVoucherModalOpen, setIsVoucherModalOpen] = useState(false); // Modal voucher
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -50,7 +53,10 @@ const CheckoutPage = () => {
         await new Promise((resolve) => setTimeout(resolve, 1000)); // Giả lập thời gian xử lý
         const userAddressData = await getShippingAddress(accessToken);
         setAddressData(userAddressData.data)
-        setShippingAddress(userAddressData.data[0]);
+
+        const defaultAddress = userAddressData.data.find(address => address.isDefault === true);
+
+        setShippingAddress(defaultAddress);
         const voucherIsActive = await getVoucher();
         setVoucherData(voucherIsActive.data);
         setIsLoading(false);
@@ -102,7 +108,7 @@ const handleCancel = () => {
     console.log('Đã hủy voucher');
     setIsVoucherModalOpen(false)
     // Xử lý khi hủy voucher
-};
+};  
 const calculateDiscount = () => {
   if (!selectedVoucher) return 0;
   return selectedVoucher.type === "fixed"
@@ -124,11 +130,39 @@ const calculateDiscount = () => {
     const address = addressData.find((addr) => addr._id === addressId);
     setSelectedAddress(address); // Cập nhật địa chỉ tạm thời
   };
+    const handelUpdateAddressDefault = async(addressId)=>{
+      try {
+          const response = await updateAddressDefault(addressId)
+          console.log('Id',addressId)
+          if(response.success){
+              NotificationMessage.success(response.message);
+              fetchApi();
+              setShippingAddress(response.data)
+              setIsModalOpen(false)
+          }else{
+              NotificationMessage.success(response.message)
+          }
+      } catch (error) {
+          console.log(error);
+    }
+  }
 
-  const handleSaveAddress = () => {
-    setShippingAddress(selectedAddress); // Cập nhật địa chỉ giao hàng với địa chỉ đã chọn
-    setIsModalOpen(false);
+  const handleAddNewAddress = async (newAddress) => {
+    console.log('New Address from child:', newAddress);
+    try {
+      const response = await addAddress(accessToken,axiosJWT,newAddress);
+      if(response.success){     
+        fetchApi();
+        NotificationMessage.success(response.message)
+      }else{
+        NotificationMessage.error(response.message)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+    
   };
+
   if (!items) {
     return (
       <div className='checkout-container'>
@@ -170,7 +204,7 @@ const calculateDiscount = () => {
     setLoading(true);
     try {
       const vertifyOrderData = ({...orderData,otp:otp})
-      const orderResponse = await createOrder(accessToken,vertifyOrderData);
+      const orderResponse = await createOrder(accessToken,vertifyOrderData,axiosJWT);
       console.log(vertifyOrderData);
       console.log(orderResponse);
       if (orderResponse.success){
@@ -178,17 +212,16 @@ const calculateDiscount = () => {
           setShowOtpInput(false);
           NotificationMessage.success(orderResponse.message);
           setIsSuccess(true);
-          await sendInfoOrder(dispatch,user?.email,orderResponse.order.order_id);
+          await sendInfoOrder(user?.email,orderResponse.order.order_id);
         } else {
           const paymentResponse = await createPaymentUrl(orderResponse?.order?.order_id);
           if (paymentResponse.success) {
             window.location.href = paymentResponse?.paymentUrl; // Chuyển hướng trực tiếp đến URL thanh toán
+            console.log(`thông tin đơn  hàng ${orderResponse.order.order_id} được gửi vào email`, orderData.email)
           } else {
             NotificationMessage.error(paymentResponse.message || 'Lỗi khi tạo URL thanh toán');
           }
         }
-        await sendInfoOrder(dispatch,user?.email,orderResponse.order.order_id);
-        console.log(`thông tin đơn  hàng ${orderResponse.order.order_id} được gửi vào email`, orderData.email)
     } else {
       NotificationMessage.error(orderResponse.message || 'Tạo đơn hàng không thành công');
     }
@@ -353,32 +386,21 @@ const calculateDiscount = () => {
             </div>
           )}
     
-          <Modal
+         <Modal
             open={isModalOpen}
-            onOk={handleSaveAddress}
+            onOk={handleModalClose}
             onCancel={handleModalClose}
-            okText="Lưu"
-            cancelText="Hủy"
+            footer={null} 
+            className='custom-modal'
           >
-            <div className="address-header">
-                <h2>Địa chỉ của tôi</h2>
-            </div>
-            <Radio.Group
-              onChange={(e) => handleAddressChange(e.target.value)}
-              value={selectedAddress?._id} // Cập nhật `selectedAddress` bằng `_id`
-              style={{ width: '100%' }}
-            >
-              {addressData?.map((address, index) => (
-                <Radio key={index} value={address._id} style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-                  <div>
-                    <p><strong>{address.recipient_name}</strong> - {address.phone_number}</p>
-                    <p>{`${address.street}, ${address.ward}, ${address.district}, ${address.province}`}</p>
-                  </div>
-                  <div className="divider"></div>
-    
-                </Radio>
-              ))}
-            </Radio.Group>
+            <AddressComponent
+                   addressData={addressData}
+                   selectedAddress={selectedAddress}
+                   handleAddressChange={handleAddressChange}  // Cập nhật voucher tạm thời khi người dùng thay đổi
+                   onCancel={handleModalClose}
+                   onApplyAddress={handleAddNewAddress}
+                   updateAddressDefault={handelUpdateAddressDefault}
+                />   
           </Modal>
     
            {/* Modal chọn voucher */}

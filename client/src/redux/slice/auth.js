@@ -20,6 +20,13 @@ const authSlice= createSlice({
         sendOtpSuccess:(state,actions)=>{
             state.sucsess=true
             state.otp=actions.payload
+        },
+        updateUser:(state,action)=>{
+            state.account= action.payload
+            state.sucsess= true
+        },
+        logoutSuccess:(state)=>{
+            state.account=null
         }
     }
 });
@@ -27,7 +34,9 @@ const authSlice= createSlice({
 export const{
     loginSuccess,
     registerSuccess,
-    sendOtpSuccess
+    sendOtpSuccess,
+    updateUser,
+    logoutSuccess
 }= authSlice.actions
 
 

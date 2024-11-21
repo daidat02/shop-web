@@ -76,14 +76,7 @@ const AdminDiscount = () => {
 
   const fetchApi = async () => {
     try {
-      const ordersData = await getOrder();
-      SetOrders(ordersData);
-      const productData = await getProducts();
-      setProducts(productData);
-      const categoriesData = await getCategories();
-      setCategories(categoriesData);
-      const tagData = await getTags();
-      setTags(tagData.data);
+    
     } catch (error) {
       console.log("Không thể tải danh mục");
     }
@@ -128,7 +121,7 @@ const AdminDiscount = () => {
       width: 20,
     },
     {
-      title: 'Code',
+      title: 'Mã Voucher',
       dataIndex: 'code',
       key: 'code',
       width: 100,
@@ -136,7 +129,7 @@ const AdminDiscount = () => {
       sorter: (a, b) => a.code.localeCompare(b.code),
     },
     {
-      title: 'Discount',
+      title: 'Giảm Giá',
       dataIndex: 'discount',
       key: 'discount',
       width: 100,
@@ -144,7 +137,7 @@ const AdminDiscount = () => {
       sorter: (a, b) => a.discount - b.discount,
     },
     {
-      title: 'Type',
+      title: 'Loại',
       dataIndex: 'type',
       key: 'type',
       width: 150,
@@ -164,7 +157,7 @@ const AdminDiscount = () => {
       sorter: (a, b) => a.type.localeCompare(b.type),
     },
     {
-      title: 'Minimum Order Value',
+      title: 'Đơn Hàng Tối thiểu',
       dataIndex: 'minOrderValue',
       key: 'minOrderValue',
       width: 100,
@@ -172,7 +165,7 @@ const AdminDiscount = () => {
       sorter: (a, b) => a.minOrderValue - b.minOrderValue,
     },
     {
-      title: 'Status',
+      title: 'Trạng Thái',
       dataIndex: 'isActive',
       key: 'state',
       width: 200,
@@ -184,7 +177,7 @@ const AdminDiscount = () => {
       align: 'center',
     },
     {
-      title: 'Valid Until',
+      title: 'Ngày Hết Hạn',
       dataIndex: 'validUntil',
       key: 'validUntil',
       width: 150,
@@ -277,7 +270,7 @@ const AdminDiscount = () => {
             icon={<PlusOutlined />}
             style={{ fontSize: 10 }}
           >
-            Add Discount
+            Thêm Voucher
           </Button>
         </div>
       </div>
