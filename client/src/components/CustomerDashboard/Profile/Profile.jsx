@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Tag, Select, Input, Button, Breadcrumb, Modal, Avatar,Checkbox } from 'antd';
+import { Table, Tag, Select, Breadcrumb, Modal, Avatar,message } from 'antd';
 import { FacebookFilled, InstagramOutlined, TwitterOutlined, UserOutlined } from '@ant-design/icons';
 import './profile.css';
 import TabOrder from './MyOrderComponent';
@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import LoadingOverlay from '../ActionComponents/LoadingOverlay';
-import { getMyOrder } from '../../../api/API_Order';
+import { getMyOrder, updateStatusOrder } from '../../../api/API_Order';
 import { createAxiosInstance } from '../../../createInstance';
 import UserProfileTabs from './UserProfileTabs';
 import AddressComponent from './AddressComponent';
@@ -81,6 +81,21 @@ const handleAddNewAddress = async (newAddress) => {
   }
   
 };
+
+const handleUpdateOrder = async(orderId)=>{
+  const status = 'completed'
+    try {
+        const response = await updateStatusOrder(orderId,status);
+        if(response.success == true){
+            message.success(response.message)
+            fetchApi();
+        }else{
+            message.error(response.message)
+        }
+    } catch (error) {
+        message.error("Có lỗi xảy ra khi cập nhật trạng thái");  // Thông báo lỗi nếu có lỗi trong quá trình xử lý
+    }
+  }
   useEffect(() => {
     fetchApi();
   }, []);
@@ -204,7 +219,7 @@ const handleAddNewAddress = async (newAddress) => {
         </div>
 
          <div className='table-detail'>
-          <TabOrder orderData={orders}/>
+          <TabOrder orderData={orders} updateOders={handleUpdateOrder}/>
         </div>
       </div>
       <Modal

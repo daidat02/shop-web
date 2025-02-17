@@ -26,7 +26,7 @@ const useSocket = () => {
     socketInstance.on("disconnect", () => {
       console.log("Disconnected from WebSocket server");
     });
-
+    
     // Cập nhật socket vào state
     setSocket(socketInstance);
 

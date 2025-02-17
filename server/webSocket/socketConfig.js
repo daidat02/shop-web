@@ -22,7 +22,7 @@ const configureWebSocket = (server) => {
         console.log('User connected:', socket.user?.user_name);
         console.log('Số người dùng online:', userSockets.size);
          // Khi người dùng kết nối lại, đăng ký lại socket của họ
-             socket.on('register', (userId) => {
+        socket.on('register', (userId) => {
             userSockets.set(userId, socket); // Lưu socket vào Map theo userId
             console.log(`User ${userId} registered with socket ID: ${socket.id}`);
             console.log('Số người dùng online:', userSockets.size);
@@ -43,7 +43,7 @@ const configureWebSocket = (server) => {
         // Khi người dùng ngắt kết nối, xóa socket khỏi Map
         socket.on('disconnect', () => {
             userSockets.forEach((s, userId) => {
-                if (s.id === socket.id) {
+                if (s._id === socket._id) {
                     userSockets.delete(userId);
                     console.log(`User ${userId} disconnected`);
                 }

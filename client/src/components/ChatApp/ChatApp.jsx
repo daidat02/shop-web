@@ -6,7 +6,7 @@ import useSocket from '../../services/webSocket';
 import './ChatApp.css';
 import { getCustomers } from '../../api/API_User';
 import { getMessages } from '../../api/API_Message';
-import getAxiosInstance, { createAxiosInstance } from '../../createInstance';
+import  { createAxiosInstance } from '../../createInstance';
 
 const ChatApp = () => {
     const socket = useSocket();

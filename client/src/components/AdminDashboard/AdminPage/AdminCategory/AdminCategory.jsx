@@ -215,6 +215,7 @@ function AdminCategory() {
             pagination={{ pageSize: 6 }}
           />
         </div>
+        
       </div>
 
       <Drawer
@@ -254,7 +255,6 @@ function AdminCategory() {
               <Button icon={<UploadOutlined />}>Upload Image</Button>
             </Upload>
           </Form.Item>
-
           <Form.Item>
             <Button type="primary" htmlType="submit">
               Tạo Danh Mục
@@ -262,6 +262,7 @@ function AdminCategory() {
           </Form.Item>
         </Form>     
       </Drawer>
+      
     </div>
   );
 }

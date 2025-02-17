@@ -213,16 +213,19 @@ const loginUser = async (req,res)=>{
     try {
         const account = await DB_Connection.Account.findOne({email:email}).populate('user');
         if(!account){
-            return res.status(STATUS.NOT_FOUND).json({message: 'email không tồn tại!!'});
-        }
+            return res.status(STATUS.NOT_FOUND).json({ success:false,message: 'email không tồn tại!!'});
+        }   
         const validPassword = await bcrypt.compare(
             password,
             account.password
         )
         if(!validPassword){
-            return res.status(STATUS.NOT_FOUND).json({message: 'Mật khẩu không đúng'});
+            return res.status(STATUS.NOT_FOUND).json({success:false, message: 'Mật khẩu không đúng'});
         }
-        if(account && validPassword){
+        if(account.user.role !== 'customer'){
+            return res.status(STATUS.BAD_REQUEST).json({success:false, message:'Tài khoản không đủ điều kiện để đăng nhập'})
+        }
+        if(account && validPassword && account.user.role === 'customer'){
                 const { accessToken, refreshToken } = await createTokens(account.user);
                 // refreshTokens.push(refreshToken);
                 res.cookie("refreshToken", refreshToken,{
@@ -243,15 +246,48 @@ const loginUser = async (req,res)=>{
     }
 }
 
+const loginAdmin = async (req,res)=>{
+    const {email, password} = req.body
+    try {
+        const account = await DB_Connection.Account.findOne({email:email}).populate('user');
+        if(!account){
+            return res.status(STATUS.NOT_FOUND).json({ success:false,message: 'email không tồn tại!!'});
+        }
+        const validPassword = await bcrypt.compare(
+            password,
+            account.password
+        )
+        if(!validPassword){
+            return res.status(STATUS.NOT_FOUND).json({success:false, message: 'Mật khẩu không đúng'});
+        }
+        if(account.user.role !== 'admin'){
+            return res.status(STATUS.BAD_REQUEST).json({success:false, message:'Tài khoản không đủ điều kiện để đăng nhập'})
+        }
+        if(account && validPassword && account.user.role ==='admin'){
+                const { accessToken, refreshToken } = await createTokens(account.user);
+                // refreshTokens.push(refreshToken);
+                res.cookie("refreshToken", refreshToken,{
+                    httpOnly: true,
+                    secure: false,
+                    path:'/',
+                    sameSite:'strict',
+                })
+            // const {password,...orther}= account._doc;
+            // const user = account.user._doc;
+            return res.status(STATUS.OK).json({
+                success:true,
+                user:account.user,accessToken,
+                message:'Đăng nhập thành công'
+            });      
+        }
+    } catch (error) {
+        res.status(STATUS.SERVER_ERROR).json({message: error.message});
+    }
+}
 const refressToken = async (req,res)=>{
     const refreshToken = req.cookies.refreshToken; // Refresh Token từ cookie
     if (!refreshToken) return res.status(401).send('No refresh token provided');
-    // if (!refreshTokens.includes(refreshToken)) {
-    //     return res.status(403).json({
-    //         message:"Refresh token is not valid " ,
-    //         data:refreshToken
-    //     });
-    // }
+
     try {
         jwt.verify(refreshToken, process.env.JWT_REFRESS_KEY, async (err, user) => {
             if (err) {
@@ -260,9 +296,6 @@ const refressToken = async (req,res)=>{
                     message:"Refresh token is not valid " ,
                 });
             }
-            
-            // refreshTokens = refreshTokens.filter((token) => token !== refreshToken);
-
             try {
                 const newAccessToken = await generateNewAccessToken(user);
                 const newRefreshToken = await generateNewRefreshToken(user);
@@ -298,8 +331,10 @@ const logoutUser = async(req,res)=>{
         success:true,
         message:'Đăng xuát thành công'
     });
+
+
 }
 
 
 
-export { registerAccount , loginUser ,sendOTP , checkOTP ,refressToken,logoutUser};
+export { registerAccount , loginUser ,sendOTP , checkOTP ,refressToken,logoutUser,loginAdmin};

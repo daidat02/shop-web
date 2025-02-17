@@ -1,7 +1,5 @@
 import { STATUS } from '../configs/Constants.js'; 
 import DB_Connection from '../model/DBConnection.js'; 
-import mongoose from 'mongoose';
-
 
 const createBrand = async(req,res)=>{
     const{brand_name, description}=req.body
@@ -33,7 +31,7 @@ const getBrand= async(req,res)=>{
             data: brands
         });
     } catch (error) {
-        res.status(500).json({
+        res.status(500).json({ 
             success: false,
             message: 'Error creating variant',
             error: error.message

@@ -65,7 +65,7 @@ const sendMessage = async (socket, data) => {
             // Lưu tin nhắn vào database
             const newMessage = new Message(messageData);
             await newMessage.save();
-
+            
             // Gửi tin nhắn đến sender
             socket.emit('receiveMessage', {
                 ...messageData,
@@ -84,31 +84,6 @@ const sendMessage = async (socket, data) => {
                 console.log(`Receiver ${receiverId} socket is not connected`);
             }
         } 
-        // Nếu là customer, gửi đến tất cả admin
-        // else if (sender.role === 'customer') {
-        //     messageData.receiverId = 'allAdmins'; // Dùng ID đặc biệt để lưu trong database
-
-        //     // Lưu tin nhắn vào database
-        //     const newMessage = new Message(messageData);
-        //     await newMessage.save();
-
-        //     // Gửi tin nhắn đến tất cả admin đang kết nối
-        //     userSockets.forEach((receiverSocket, receiverUserId) => {
-        //         if (receiverSocket.user?.role === 'admin' && receiverSocket.connected) {
-        //             receiverSocket.emit('receiveMessage', {
-        //                 ...messageData,
-        //                 isSender: false,
-        //             });
-        //             console.log(`Đã gửi tin nhắn đến admin: ${receiverUserId}`);
-        //         }
-        //     });
-
-        //     // Gửi tin nhắn đến chính customer
-        //     socket.emit('receiveMessage', {
-        //         ...messageData,
-        //         isSender: true,
-        //     });
-        // } 
         else {
             throw new Error('Role not supported');
         }
@@ -128,7 +103,7 @@ const getMessages = async (req, res) => {
         const { userId, otherUserId } = req.query;
         const user = await DB_Connection.User.findOne({_id:userId})
         const otherUser = await DB_Connection.User.findOne({_id:otherUserId});
-
+        
         if (!user || !otherUser) {
             return res.status(400).json({ error: 'Missing required parameters' });
         }

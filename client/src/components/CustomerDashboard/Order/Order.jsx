@@ -222,12 +222,13 @@ const calculateDiscount = () => {
             NotificationMessage.error(paymentResponse.message || 'Lỗi khi tạo URL thanh toán');
           }
         }
-    } else {
-      NotificationMessage.error(orderResponse.message || 'Tạo đơn hàng không thành công');
-    }
-    } catch (error) {
-      NotificationMessage.error('Lỗi khi tạo đơn hàng')
-    }
+        dispatch({ type: 'cart/setCountItems', payload: orderResponse.cartCount });
+      } else {
+        NotificationMessage.error(orderResponse.message || 'Tạo đơn hàng không thành công');
+      }
+      } catch (error) {
+        NotificationMessage.error('Lỗi khi tạo đơn hàng')
+      }
   };
 
   return (

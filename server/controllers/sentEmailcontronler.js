@@ -195,11 +195,11 @@ const resetPassword = async (req, res) => {
             html: `
                 <html>
                     <body>
-                        <div style="text-align:center;">
+                        <div style="text-align:center;padding: 20px;">
                             <h2>Yêu cầu đặt lại mật khẩu</h2>
                             <p>Nhấn vào nút bên dưới để tạo mật khẩu mới:</p>
                             <a href="${process.env.FRONTEND_URL}/return-pass?token=${token}" 
-                             style="background-color:#4CAF50;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;">
+                             style="background-color:#0066cc;color:white;padding:13px 20px;text-decoration:none;border-radius:5px;margin-top: 20px; display: inline-block;">
                                 Tạo mật khẩu mới
                             </a>
                         </div>

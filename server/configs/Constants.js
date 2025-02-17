@@ -5,6 +5,7 @@ const API_PATH = {
     CHECK_OTP:"/otp/check-otp",
     REG_ACC: "/auth/reg",
     LOGIN: "/auth/login",
+    LOGIN_ADMIN:"/auth/admin/login",
     REFRESH_TOKEN:"/auth/refresh",
     LOGOUT:'/auth/logout',
     //category
@@ -95,86 +96,5 @@ function generateID(length) {
 const createRandomID = ()=>{
     return uuidv4();
 }
-
-// const OTPOption = {
-//     from: "daidat1202@gmail.com",
-//     to: email,
-//     subject: 'Mã xác thực OTP',
-//     html: `
-//         <html>
-//             <head>
-//                 <style>
-//                     body {
-//                         font-family: Arial, sans-serif;
-//                         background-color: #f4f4f4;
-//                         margin: 0;
-//                         padding: 0;
-//                         color: #333;
-//                     }
-//                     .email-container {
-//                         max-width: 600px;
-//                         margin: 20px auto;
-//                         background-color: #ffffff;
-//                         border-radius: 8px;
-//                         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-//                         padding: 20px;
-//                     }
-//                     .email-header {
-//                         text-align: center;
-//                         padding: 10px 0;
-//                         border-bottom: 1px solid #ddd;
-//                     }
-//                     .email-header h2 {
-//                         color: #000;
-//                         margin: 0;
-//                     }
-//                     .email-body {
-//                         padding: 20px 0;
-//                         text-align: center;
-//                     }
-//                     .otp-code {
-//                         font-size: 24px;
-//                         font-weight: bold;
-//                         color: #000;
-//                         margin: 20px 0;
-//                         padding: 10px;
-//                         border-radius: 5px;
-//                         background-color: #f4f9f4;
-//                         display: inline-block;
-//                     }
-//                     .email-footer {
-//                         text-align: center;
-//                         font-size: 12px;
-//                         color: #777;
-//                         margin-top: 30px;
-//                         padding-top: 10px;
-//                         border-top: 1px solid #ddd;
-//                     }
-//                 </style>
-//             </head>
-//             <body>
-//                 <div class="email-container">
-//                     <div class="email-header">
-//                         <h2>Mã xác thực OTP của bạn</h2>
-//                     </div>
-//                     <div class="email-body">
-//                         <p>Chào bạn,</p>
-//                         <p>Đây là mã OTP để xác thực email của bạn:</p>
-//                         <div class="otp-code">${otp}</div>
-//                         <p>Mã OTP này có hiệu lực trong 10 phút. Vui lòng không chia sẻ mã này với bất kỳ ai.</p>
-//                     </div>
-//                     <div class="email-footer">
-//                         <p>Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi.</p>
-//                     </div>
-//                 </div>
-//             </body>
-//         </html>
-//     `
-// }
-
-// const MAIL_OPTION={
-//   OTP_OPTION:OTPOption
-// }
-
 
 export  { API_PATH, STATUS, DB_SCHEMA , createRandomID, generateID};

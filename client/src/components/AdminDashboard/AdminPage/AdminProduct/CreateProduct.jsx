@@ -40,23 +40,23 @@ const CreateProduct = ({ categoryId }) => {
 
   const [isLoading,setIsLoading] = useState(false);
   useEffect(() => {
-    const fetchApi= async () => {
-        try {
-            const categoriesdata = await getCategories(); // Gọi hàm getCategories
-            setCategories(categoriesdata); // Lưu danh mục vào state
-            const tagData = await getTags();
-            setTags(tagData.data);
-            const variantsData = await getVariants();
-            setAvailableOptions(variantsData.data)
-            const brandData = await getBrand();
-            setBrands(brandData);
-        } catch (error) {
-            console.log("Không thể tải danh mục"); // Thiết lập thông báo lỗi nếu có
-        }
-    };
+    
     fetchApi();
 }, []);
-
+const fetchApi= async () => {
+  try {
+      const categoriesdata = await getCategories(); // Gọi hàm getCategories
+      setCategories(categoriesdata); // Lưu danh mục vào state
+      const tagData = await getTags();
+      setTags(tagData.data);
+      const variantsData = await getVariants();
+      setAvailableOptions(variantsData.data)
+      const brandData = await getBrand();
+      setBrands(brandData);
+  } catch (error) {
+      console.log("Không thể tải danh mục"); // Thiết lập thông báo lỗi nếu có
+  }
+};
 const handleUpload = async (file) => {
   setIsLoading(true)
   try {
@@ -162,7 +162,25 @@ const onFinish = async () => {
     }));
   };
 
-  
+  const handleClear = async ()=>{
+    setFileList([]);
+    setImageUrls([]);
+    setProductData({
+      product_name: '',
+      description: '',
+      price: '',
+      salePrice: '',
+      quantity: '',
+      category: '',
+      productType: '',
+      brand: '',
+      collection: '',
+      tags: [],
+      discountPercentage:''
+    });
+    setVariants([]);
+    setAvailableOptions([]);  
+  }
   return (
     <div className='content-container'>
       <LoadingOverlay isLoading={isLoading}/>
@@ -174,7 +192,7 @@ const onFinish = async () => {
       <div className='title-container'>
         <h1 className='content-title'>Thêm Sản Phẩm</h1>
         <div className='btn-action'>
-          <Button className='btn-exprot' style={{ background: 'none' }}>
+          <Button className='btn-exprot' onClick={()=>handleClear} style={{ background: 'none' }}>
             <ClearOutlined /> Xóa Dữ Liệu
           </Button>
 

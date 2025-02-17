@@ -20,16 +20,8 @@ const TabOrder = ({orderData, updateOders}) => {
     return orderData?.filter((order) => order.status === status).length;
   };
   const handleConfirmDelivery = async(orderId)=>{
-    const status = 'completed'
-    try {
-        const response = await updateStatusOrder(orderId,status);
-        if(response.success == true){
-            message.success(response.message)
-        }else{
-            message.error(response.message)
-        }
-    } catch (error) {
-        message.error("Có lỗi xảy ra khi cập nhật trạng thái");  // Thông báo lỗi nếu có lỗi trong quá trình xử lý
+    if(updateOders){
+      updateOders(orderId)
     }
   }
   const statusConfig = {

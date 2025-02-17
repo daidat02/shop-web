@@ -8,7 +8,16 @@ export const loginUser = async(dispatch,loginData)=>{
         dispatch(loginSuccess(res.data));
         return res.data
     } catch (error) {
-        return { success: false, error: error.message };   
+        return error.response.data
+    }
+}
+export const loginAdmin = async(dispatch,loginData)=>{
+    try {
+        const res = await axios.post(`/auth/admin/login`,loginData);
+        dispatch(loginSuccess(res.data));
+        return res.data
+    } catch (error) {
+        return error.response.data
     }
 }
 

@@ -54,7 +54,8 @@ const VNPayReturn = () => {
                 if (response.success) {
                     setPaymentStatus(PAYMENT_STATUS.SUCCESS);
                     setTransactionInfo(response.data);
-                    await sendInfoOrder(user?.email,response.orderId);
+                    console.log(response)
+                    await sendInfoOrder(user?.email,response.data.orderId);
 
                     message.success("Thanh toán thành công!");
                 } else {

@@ -14,8 +14,8 @@ import AdminDiscount from './AdminDiscount/AdminDiscount';
 import AdminOrderDetail from './AdminOrder/AdminOrderDetail';
 import ChatApp from '../../ChatApp/ChatApp';
 import HeaderComponent from '../../AdminHeader/HeaderAdmin';
-import AdminHome from './AdminHome/AdminHome';
-import Login from '../../Auth/Login';
+// import AdminHome from './AdminHome/AdminHome';
+import LoginAdmin from '../../Auth/LoginAdmin';
 import { useSelector } from 'react-redux';
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -54,7 +54,7 @@ const AdminDashBoard = () => {
   };
 
   if (!isLoggedIn) {
-    return <Login />; // Hiển thị trang Login nếu chưa đăng nhập
+    return <LoginAdmin />; // Hiển thị trang Login nếu chưa đăng nhập
   }
 
   return (
@@ -83,7 +83,7 @@ const AdminDashBoard = () => {
               minHeight: 360, 
             }}>
             <Routes>
-              <Route path="home" element={<AdminHome/>} />
+              <Route path="home" element={<AdminCategory/>} />
               <Route path="category" element={<AdminCategory />} />
               <Route path="products" element={<AdminProduct />} />
               <Route path="/create-product/:categoryId" element={<CreateProduct />} />

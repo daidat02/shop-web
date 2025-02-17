@@ -3,10 +3,10 @@ import "./login.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from 'react-redux';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import { loginUser } from "../../api/API_Auth";
+import { loginAdmin } from "../../api/API_Auth";
 import NotificationMessage from "../Message/NotificationMessage";
 
-const Login = () => {
+const LoginAdmin = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const dispatch = useDispatch();
@@ -18,25 +18,23 @@ const Login = () => {
             email: username,
             password: password,
         };
-
-        const response = await loginUser( dispatch,newUser);
+        
+        const response = await loginAdmin( dispatch,newUser);
         console.log(response)
-        if (response.success) {
-            if(response?.user?.role === 'admin'){
+       try {
+            if (response.success) {
                 navigate(`/admin/home`)
-            }else{
-                navigate(`/`)
+                NotificationMessage.success("Đăng nhập thành công!");
+            } else {
+                NotificationMessage.error(response.message);
             }
-            NotificationMessage.success("Đăng nhập thành công!");
-            
-        } else {
-            NotificationMessage.error(response.message);
-        }
+       } catch (error) {
+            console.log(error)
+       }
     };
     
     return (
         <div className="login-page">
-            
             <div className="login-img"><img src="/images/login_img.jpeg" alt="" /></div>
             <div className="login-container">
                 <div className="login-form-container">
@@ -70,13 +68,13 @@ const Login = () => {
                         <button type="submit" className="login-button">Đăng nhập</button>
                     </form>
                    
-                    <p className="login-footer">
+                    {/* <p className="login-footer">
                        Bạn chưa có tài khoản? <Link to="/register">Tạo tài khoản ngay</Link>
-                    </p>
+                    </p> */}
                 </div>
             </div>
         </div>
     );
 };
 
-export default Login;
+export default LoginAdmin;

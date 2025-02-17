@@ -120,14 +120,23 @@ const createOrder = async (req, res) => {
                     items: { 
                         product: { $in: selectedItems.map(item => new ObjectId(item.product)) }
                     } 
-                }
+                },
+                $set: {
+                    count: cart.items.length - selectedItems.length
+                }             
             }
         );
+            // Lấy lại giỏ hàng sau khi cập nhật
+            const updatedCart = await DB_Connection.ShoppingCart.findOne({ user: new ObjectId(user.id) });
+
+            // Tính toán số sản phẩm còn lại trong giỏ hàng
+            let cartCount = updatedCart.items.length;
 
         res.status(STATUS.CREATED).json({
             success:true,
             message: 'Đơn hàng đã được tạo thành công',
-            order: newOrder 
+            order: newOrder,
+            cartCount: cartCount
         });
 
     } catch (error) {
@@ -252,7 +261,7 @@ const updateStatusOrder = async(req,res)=>{
     } catch (error) {
         res.status(STATUS.SERVER_ERROR).json({
             message: error.name,
-            error: error.message,
+            error: error.message, 
         });
     }
 }
