@@ -206,7 +206,7 @@ const HeaderAdmin = () => {
         <div className="header-container-admin">
             <div className="admin-header-content">
                 <div className="logo" onClick={() => navigate('/admin/')}>
-                    <img src="/images/logo_shop.png" alt="logo" />
+                <img src="/images/logo_shopping_go.PNG" alt="logo" />
                 </div>
 
                 <div className="nav">

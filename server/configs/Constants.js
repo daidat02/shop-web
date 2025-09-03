@@ -54,7 +54,6 @@ const API_PATH = {
     SEND_INFO_ORDER:"/send/info-order",
     RESET_PASS:"/send/reset-pass",
     RETURN_NEWPASS:"/send/return-newpass",
-
     //message 
     GET_MESSAGE:`/message`
 };

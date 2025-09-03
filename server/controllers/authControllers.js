@@ -228,12 +228,12 @@ const loginUser = async (req,res)=>{
         if(account && validPassword && account.user.role === 'customer'){
                 const { accessToken, refreshToken } = await createTokens(account.user);
                 // refreshTokens.push(refreshToken);
-                res.cookie("refreshToken", refreshToken,{
-                    httpOnly: true,
-                    secure: false,
-                    path:'/',
-                    sameSite:'strict',
-                })
+            res.cookie("refreshToken", refreshToken, {
+                httpOnly: true,
+                secure: false,
+                path: '/',
+                sameSite: 'strict',
+            });
             // const {password,...orther}= account._doc;
             // const user = account.user._doc;
             return res.status(STATUS.OK).json({
@@ -300,8 +300,6 @@ const refressToken = async (req,res)=>{
                 const newAccessToken = await generateNewAccessToken(user);
                 const newRefreshToken = await generateNewRefreshToken(user);
                 
-                // refreshTokens.push(newRefreshToken);
-
                 res.cookie("refreshToken", newRefreshToken, {
                     httpOnly: true,
                     secure: false,
